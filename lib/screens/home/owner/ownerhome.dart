@@ -1,3 +1,5 @@
+
+import 'package:location/location.dart';
 import 'package:flutter/material.dart';
 import 'package:untitled1/main.dart';
 import 'package:untitled1/screens/home/owner/addjourney.dart';
@@ -94,7 +96,38 @@ class _OwnerHomeState extends State<OwnerHome> {
           //     child: FloatingActionButton.extended(onPressed: (){},
           //       label: Icon(Icons.person),elevation: 5,)),
         ],
-      ),
+      ),floatingActionButton: FloatingActionButton(
+      onPressed: ()async{
+      Location location = new Location();
+
+      bool _serviceEnabled;
+      PermissionStatus _permissionGranted;
+      LocationData _locationData;
+
+      _serviceEnabled = await location.serviceEnabled();
+      if (!_serviceEnabled) {
+        _serviceEnabled = await location.requestService();
+        if (!_serviceEnabled) {
+          return;
+        }
+      }
+
+      _permissionGranted = await location.hasPermission();
+      if (_permissionGranted == PermissionStatus.denied) {
+        _permissionGranted = await location.requestPermission();
+        if (_permissionGranted != PermissionStatus.granted) {
+          return;
+        }
+      }
+
+      _locationData = await location.getLocation();
+      double? latx = _locationData.latitude;
+      double? longx = _locationData.longitude;
+      print(latx!);
+      print(longx!);
+      location.enableBackgroundMode(enable: true);
+    },child: Icon(Icons.location_on_outlined),
+    ),
     );
   }
 

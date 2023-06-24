@@ -54,6 +54,6 @@ class _UserSwitchState extends State<UserSwitch> {
     }else if (userdesignation == '2'){
       return DualHome(user: widget.user);
     }
-    return Container(height: 5,child: CircularProgressIndicator(),);
+    return Container(height: 1,child: CircularProgressIndicator(),);
   }
 }

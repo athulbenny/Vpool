@@ -10,6 +10,6 @@ class OwnerNotif extends StatefulWidget {
 class _OwnerNotifState extends State<OwnerNotif> {
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Scaffold();
   }
 }

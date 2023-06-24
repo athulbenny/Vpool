@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:untitled1/models/user.dart';
+import 'package:untitled1/screens/home/traveller/usersearchresult.dart';
 import 'package:untitled1/services/databaseService.dart';
 
 class MyUserHome extends StatefulWidget {
-  const MyUserHome({Key? key}) : super(key: key);
+  const MyUserHome({required this.user});
+  final NewUser user;
 
   @override
   State<MyUserHome> createState() => _MyUserHomeState();
@@ -16,12 +18,13 @@ class _MyUserHomeState extends State<MyUserHome> {
     return StreamProvider.value(
         value: JourneyDatabaseService().journeylist,
         initialData: null,
-        child: AllJourneys());
+        child: AllJourneys(user: widget.user));
   }
 }
 
 class AllJourneys extends StatefulWidget {
-  const AllJourneys({Key? key}) : super(key: key);
+  const AllJourneys({required this.user});
+  final NewUser user;
 
   @override
   State<AllJourneys> createState() => _AllJourneysState();
@@ -33,34 +36,39 @@ class _AllJourneysState extends State<AllJourneys> {
     final journeylist = Provider.of<List<Journey>?>(context)??[];
     print("journey length"+journeylist.length.toString());
     return ListView.separated(itemBuilder: (context,index){
-      return Card(elevation: 5,
-        child: Column(
-          children:[
-            Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Text(journeylist[index].startingloc),
-                Text('-------->'),
-                Text(journeylist[index].endingloc)
+      return GestureDetector(onTap: (){
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context)=>SelectJourney(user: widget.user,selected: journeylist[index],)));
+      },
+        child: Card(elevation: 10,
+          child: Column(
+            children:[
+              Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly,children: [
+                Expanded(flex:1,child:Text('journey'),),
+                Expanded(flex: 2,child: Text(journeylist[index].startingloc)),
+                Expanded(flex:1,child:Text('------->'),),
+                Expanded(flex:2,child: Text(journeylist[index].endingloc))
               ],),
-            Text(journeylist[index].date),
-            Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [Text(journeylist[index].startingtime),
-              Text(journeylist[index].endingtime),],),
-            Text(journeylist[index].remseats),
-          ],
+              Row(
+                children: [
+                  Expanded(flex:1,child:Text('journey date'),),
+                  Expanded(flex: 1,child: Text(journeylist[index].date)),
+                ],
+              ),
+              Row(
+                children: [
+                  Expanded(flex:1,child:Text('remaining seats'),),
+                  Expanded(flex: 1,child: Text(journeylist[index].remseats)),
+                ],
+              ),
+            ],
+          ),
         ),
       );
     },
         separatorBuilder: (context,index){
-      return Container(height: 20,);
+      return Container(height: 5,);
         }
         , itemCount: journeylist.length);
   }
 }
-
-//Container(
-//       padding: EdgeInsets.symmetric(
-//         vertical: 20,horizontal: 20,
-//       ),
-//
-//     );

@@ -95,7 +95,7 @@ class _RegisterState extends State<Register> {
                     Expanded(flex: 1,child: Text("Aadhaar's last 4 digits",style: TextStyle(fontSize: 18.0),)),
                     Expanded(flex:3,
                       child: TextField(
-                        controller: phno,
+                        controller: adhar,
                         decoration: InputDecoration(
                             hintText: 'Aadhaar'
                         ),

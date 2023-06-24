@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:untitled1/main.dart';
+
 import 'package:untitled1/screens/home/traveller/travelleruserhome.dart';
 import 'package:untitled1/screens/home/traveller/userbookings.dart';
 import 'package:untitled1/screens/home/traveller/usernotification.dart';
 import 'package:untitled1/screens/home/traveller/usersearchresult.dart';
 import '../../../models/user.dart';
 import '../../../services/auth.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 
 
 class UserHome extends StatefulWidget {
@@ -28,14 +30,13 @@ class _UserHomeState extends State<UserHome> {
   @override
   Widget build(BuildContext context) {
     final pages = [
-      MyUserHome(),
-      Search(user: widget.user,),
-      UserNotification(user: widget.user),
+      MyUserHome(user: widget.user),
+      MySearch(user:widget.user),
+      UserNotification(user:widget.user),
       UserBookings(user: widget.user),
     ];
 
     return Scaffold(
-
       appBar: AppBar(
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
@@ -61,7 +62,7 @@ class _UserHomeState extends State<UserHome> {
 
                   const PopupMenuItem<int>(
                     value: 1,
-                    child: Text("Settings"),
+                    child: Text("my qr"),
                   ),
 
                   const PopupMenuItem<int>(
@@ -74,7 +75,9 @@ class _UserHomeState extends State<UserHome> {
                 if(value == 0){
                   print("My account menu is selected.");
                 }else if(value == 1) {
-                  print("My settings menu is selected.");
+                  Navigator.push(context,MaterialPageRoute(builder: (context){
+                    return QrTraveller(user: widget.user,);
+                  }));
                 }else if(value == 2){
                   await _auth.signOut();
                 }
@@ -217,3 +220,20 @@ class _UserHomeState extends State<UserHome> {
   }
 }
 
+class QrTraveller extends StatefulWidget {
+  const QrTraveller({required this.user});
+  final NewUser user;
+
+  @override
+  State<QrTraveller> createState() => _QrTravellerState();
+}
+
+class _QrTravellerState extends State<QrTraveller> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: QrImageView(data: widget.user.username ,version: QrVersions.auto,
+        size: MediaQuery.of(context).devicePixelRatio,),
+    );
+  }
+}

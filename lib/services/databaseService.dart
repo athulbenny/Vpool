@@ -7,13 +7,8 @@ import '../models/user.dart';
 
 class UserDatabaseService {
 
-  //final String adusername;
-
-  //AdminDatabaseService({required this.adusername});
-
   final CollectionReference _usercollection = FirebaseFirestore.instance
       .collection('user');
-
 
   Future updateOwnerData(String email, String username,
       String phno, String adhar, String vno, String rcbook,
@@ -56,7 +51,6 @@ class UserDatabaseService {
     });
   }
 
-
   Stream<List<Travellers>> get users {
     return _usercollection.snapshots().map(_usersListFromDatabase);
   }
@@ -71,14 +65,10 @@ class UserDatabaseService {
     }).toList();
   }
 
-
 }
 
 
 class JourneyDatabaseService{
-
-  // String email;
-  // JourneyDatabaseService({required this.email});
 
   final CollectionReference _journeycollection = FirebaseFirestore.instance
       .collection('journey');
@@ -88,7 +78,7 @@ class JourneyDatabaseService{
 
   Future addAdminJourneyDataInUser(String email,String startingtime, String endingtime,
       String startingloc, String endingloc, String numseats, String date,
-      String desc,String journeyid) async {
+      String desc,String journeyid,String slat,String slong,String elat,String elong) async {
     return await _usercollection.doc(email).collection('journey').doc(journeyid).set({
       "email":email,
       "startingtime": startingtime,
@@ -96,17 +86,19 @@ class JourneyDatabaseService{
       'date': date,
       'startingloc': startingloc,
       "endingloc": endingloc,
+      "startlat":slat,
+      "startlong":slong,
+      "endlat":elat,
+      "endlong":elong,
       "numseats": numseats,
       "remseats":numseats,
-      "desc": desc,
       "journeyid":journeyid
-      //"vehicleno": vno,
     });
   }
 
   Future addAdminJourneyDataInJourney(String email,String startingtime, String endingtime,
       String startingloc, String endingloc, String numseats, String date,
-      String desc,String journeyid) async {
+      String desc,String journeyid,String slat,String slong,String elat,String elong) async {
     return await _journeycollection.doc(journeyid).set({
       "email":email,
       "startingtime": startingtime,
@@ -116,9 +108,12 @@ class JourneyDatabaseService{
       "endingloc": endingloc,
       "numseats": numseats,
       "remseats":numseats,
+      "startlat":slat,
+      "startlong":slong,
+      "endlat":elat,
+      "endlong":elong,
       "desc": desc,
       "journeyid":journeyid
-      //"vehicleno": vno,
     });
   }
 
@@ -139,8 +134,9 @@ class JourneyDatabaseService{
 }
 
 
-class JourneyDriverTravellerConnection{
+class JourneyDriverTravellerConnection {
   String driverid;
+
   JourneyDriverTravellerConnection({required this.driverid});
 
   final CollectionReference _journeycollection = FirebaseFirestore.instance
@@ -148,49 +144,70 @@ class JourneyDriverTravellerConnection{
   final CollectionReference _usercollection = FirebaseFirestore.instance
       .collection('user');
 
-  Future AddTravellerJourneyData(String email, String startingloc, String endingloc, String numseats,String journeyid) async {
-    return await _usercollection.doc(driverid).collection('journey').doc(journeyid).collection('coriders').doc(email).set({
-      "email":email,
+  Future AddTravellerJourneyData(String email, String startingloc,
+      String endingloc, String numseats, String journeyid,
+      String slat,String slong,String elat,String elong,) async {
+    return await _usercollection.doc(driverid).collection('journey').doc(
+        journeyid).collection('coriders').doc(email).set({
+      "email": email,
       'startingloc': startingloc,
       "endingloc": endingloc,
+      "startlat":slat,
+      "startlong":slong,
+      "endlat":elat,
+      "endlong":elong,
       "numseats": numseats,
-      "journeyid":journeyid,
-      "driverid":driverid,
+      "journeyid": journeyid,
+      "driverid": driverid,
     });
   }
 
-  Future AddAdminJourneyData(String email, String startingloc, String endingloc, String numseats,String journeyid) async {
-    return await _usercollection.doc(email).collection('journey').doc(journeyid).set({
-      "email":email,
+  Future AddAdminJourneyData(String email, String startingloc, String endingloc,
+      String numseats, String journeyid, String slat, String slong, String elat,
+      String elong) async {
+    return await _usercollection.doc(email).collection('journey')
+        .doc(journeyid)
+        .set({
+      "email": email,
       'startingloc': startingloc,
       "endingloc": endingloc,
       "numseats": numseats,
-      "journeyid":journeyid,
-      "driverid":driverid,
+      "journeyid": journeyid,
+      "driverid": driverid,
     });
   }
 
-  Future AddAdminJourneyUserData(String date,String email, String startingloc, String endingloc, String numseats,String journeyid) async {
-    var em= email+ DateTime.now().toString();
-    return await _usercollection.doc(driverid).collection('journeyuser').doc(em).set({
-      "email":email,
+  Future AddAdminJourneyUserData(String date, String email, String startingloc,
+      String endingloc,
+      String numseats, String journeyid, String slat, String slong, String elat,
+      String elong) async {
+    return await _usercollection.doc(driverid).collection('journeyuser').doc(
+        journeyid).set({
+      "email": email,
       'startingloc': startingloc,
       "endingloc": endingloc,
+      "startlat": slat,
+      "startlong": slong,
+      "endlat": elat,
+      "endlong": elong,
       "numseats": numseats,
-      "date":date,
-      "journeyid":journeyid,
-      "driverid":driverid,
+      "date": date,
+      "journeyid": journeyid,
+      "driverid": driverid,
     });
   }
 
-  Future UpdateDriverJourneyDataInJourney(String remseats) async {
-    return await _journeycollection.doc(driverid).update({
+  Future UpdateDriverJourneyDataInJourney(String remseats,
+      String journeyid) async {
+    return await _journeycollection.doc(journeyid).update({
       "remseats": remseats,
     });
   }
 
-  Future UpdateDriverJourneyDataInUser(String remseats,String journeyid) async {
-    return await _usercollection.doc(driverid).collection('journey').doc(journeyid).update({
+  Future UpdateDriverJourneyDataInUser(String remseats,
+      String journeyid) async {
+    return await _usercollection.doc(driverid).collection('journey').doc(
+        journeyid).update({
       "remseats": remseats,
     });
   }
@@ -198,43 +215,120 @@ class JourneyDriverTravellerConnection{
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////
-class AllJourneyTravellerDatabaseService{
-    String useremail;
-    AllJourneyTravellerDatabaseService({required this.useremail});
+class AllJourneyTravellerDatabaseService {
+  String useremail;
+
+  AllJourneyTravellerDatabaseService({required this.useremail});
 
   final CollectionReference _usercollection = FirebaseFirestore.instance
       .collection('user');
 
-  Stream<List<Corider>> get corider {
-    return _usercollection.doc(useremail).collection('journey').snapshots().map(_gobacktoDriverListFromDatabase);
+  Stream<List<Rider>> get corider {
+    return _usercollection.doc(useremail).collection('journey').snapshots().map(
+        _gobacktoDriverListFromDatabase);
   }
-  List<Corider> _gobacktoDriverListFromDatabase(QuerySnapshot snapshot) {
+
+  List<Rider> _gobacktoDriverListFromDatabase(QuerySnapshot snapshot) {
     return snapshot.docs.map((usersnapshot) {
       Map<String, dynamic> _user = jsonDecode(jsonEncode(usersnapshot.data()));
       print("journey travelling users is" + _user.toString());
-      return Corider(email: _user["driverid"] ?? "",
-          nofseats: _user["numseats"] ?? "");
+      return Rider(email: _user["email"] ?? "",
+          nofseats: _user["numseats"] ?? "",
+          date: _user["date"] ?? "",
+          endloc: _user["endingloc"] ?? "",
+          startloc: _user["startingloc"] ?? "",
+          journeyid: _user["journeyid"] ?? "",
+          isstart: _user["isstart"]??"",
+          isnotified: _user["isnotified"]??"",
+          driverid: _user["driverid"]??"",
+          distance: _user["distance"]??"");
     }).toList();
   }
+
+  Future updateDriverJStartData(String journeyid)async{
+    return await _usercollection.doc(useremail).collection('journey').doc(journeyid).update(
+      {"isstart":"1",});
+  }
+
 }
 
-class AllJourneyDriverDatabaseService{
+class AllJourneyDriverDatabaseService {
   String useremail;
+
   AllJourneyDriverDatabaseService({required this.useremail});
 
   final CollectionReference _usercollection = FirebaseFirestore.instance
       .collection('user');
 
-  Stream<List<Cocorider>> get corider {
-    return _usercollection.doc(useremail).collection('journeyuser').snapshots().map(_gobacktoDriverListFromDatabase);
+  Stream<List<Travel>> get corider {
+    return _usercollection.doc(useremail).collection('journey')
+        .snapshots()
+        .map(_gobacktoDriverListFromDatabase);
   }
-  List<Cocorider> _gobacktoDriverListFromDatabase(QuerySnapshot snapshot) {
+
+  List<Travel> _gobacktoDriverListFromDatabase(QuerySnapshot snapshot) {
     return snapshot.docs.map((usersnapshot) {
       Map<String, dynamic> _user = jsonDecode(jsonEncode(usersnapshot.data()));
       print("journey travelling users is" + _user.toString());
-      return Cocorider(email: _user["email"] ?? "",
-          date: _user["date"]??"",
-          nofseats: _user["numseats"] ?? "");
+      return Travel(email: _user["driverid"] ?? "",
+          nofseats: _user["numseats"] ?? "",
+          date: _user["date"] ?? "",
+          endloc: _user["endingloc"] ?? "",
+          startloc: _user["startingloc"] ?? "",
+          slat: _user["startlat"] ?? "",
+          slong: _user["startlong"] ?? "",
+          elat: _user["endlat"] ?? "",
+          elong: _user["endlong"] ?? "",
+          journeyid: _user["journeyid"] ?? "");
     }).toList();
+  }
+}
+
+class AdminJourneyDatabaseService {
+
+  String useremail, journeyid;
+
+  AdminJourneyDatabaseService({required this.useremail, required this.journeyid});
+
+  final CollectionReference _usercollection = FirebaseFirestore.instance
+      .collection('user');
+
+  Stream<List<Corider>> get corider {
+    return _usercollection.doc(useremail).collection('journey').doc(journeyid)
+        .collection('coriders').snapshots()
+        .map(_gobacktoDriverJListFromDatabase);
+  }
+
+  List<Corider> _gobacktoDriverJListFromDatabase(QuerySnapshot snapshot) {
+    return snapshot.docs.map((usersnapshot) {
+      Map<String, dynamic> _user = jsonDecode(jsonEncode(usersnapshot.data()));
+      print("journey travelling users is" + _user.toString());
+      return Corider(email: _user["email"] ?? "",
+          nofseats: _user["numseats"] ?? "",
+          date: _user["date"] ?? "",
+          endloc: _user["endingloc"] ?? "",
+          startloc: _user["startingloc"] ?? "",
+          slat: _user["startlat"] ?? "",
+          slong: _user["startlong"] ?? "",
+          elat: _user["endlat"] ?? "",
+          elong: _user["endlong"] ?? "",
+          journeyid: _user["journeyid"] ?? "",
+          isjoined: _user["isjoined"]??"",
+          isleaved: _user["isleaved"]??"");
+    }).toList();
+  }
+
+  Future updateDriverJourneyDataInUser(String isjoined,String tremail) async {
+    return await _usercollection.doc(useremail).collection('journey').doc(
+        journeyid).collection('coriders').doc(tremail).update({
+      "isjoined": isjoined,
+    });
+  }
+
+  Future updateDriverJourneyDistanceData(String distance) async {
+    return await _usercollection.doc(useremail).collection('journey').doc(
+        journeyid).update({
+      "distance": distance,
+    });
   }
 }
