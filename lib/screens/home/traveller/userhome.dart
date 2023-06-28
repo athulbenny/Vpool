@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:untitled1/main.dart';
-
 import 'package:untitled1/screens/home/traveller/travelleruserhome.dart';
 import 'package:untitled1/screens/home/traveller/userbookings.dart';
 import 'package:untitled1/screens/home/traveller/usernotification.dart';
@@ -10,6 +9,7 @@ import '../../../services/auth.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 
+///initail page of a travller maps to different services of travller
 class UserHome extends StatefulWidget {
   const UserHome({required this.user});
   final NewUser user;
@@ -37,44 +37,35 @@ class _UserHomeState extends State<UserHome> {
     ];
 
     return Scaffold(
+      ///app bar of travler page
       appBar: AppBar(
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
               bottomRight: Radius.circular(25),
               bottomLeft: Radius.circular(25)),
         ), toolbarHeight: MediaQuery.of(context).size.height/15,
-        title: Center(child:
+        title:const  Center(child:
         Text('V-Pool',style: TextStyle(
             fontSize: 25,fontWeight:FontWeight.w900),)),
         backgroundColor: topcolor,
         centerTitle: true,
-        leading: BackButton(onPressed: (){
-          //Navigator.of(context).pushNamed(Login.id);
-        },),
+        leading: BackButton(),
         actions: [
           PopupMenuButton(
               itemBuilder: (context){
                 return [
                   const PopupMenuItem<int>(
-                    value: 0,
-                    child: Text("My Account"),
-                  ),
-
+                    value: 0, child: Text("My Account"),),
                   const PopupMenuItem<int>(
-                    value: 1,
-                    child: Text("my qr"),
-                  ),
-
+                    value: 1, child: Text("My Qr"),),
                   const PopupMenuItem<int>(
-                    value: 2,
-                    child: Text("Logout"),
-                  ),
+                    value: 2, child: Text("Logout"),),
                 ];
               },
               onSelected:(value)async{
                 if(value == 0){
                   print("My account menu is selected.");
-                }else if(value == 1) {
+                }else if(value == 1) {///display qr code
                   Navigator.push(context,MaterialPageRoute(builder: (context){
                     return QrTraveller(user: widget.user,);
                   }));
@@ -85,19 +76,19 @@ class _UserHomeState extends State<UserHome> {
           ),
         ],
       ),
+      ///body of travler page
       body: Stack(
         children: [
           Container(padding: EdgeInsets.only(left: MediaQuery.of(context).size.height/50,right: MediaQuery.of(context).size.height/50),
               height: MediaQuery.of(context).size.height,child: pages[pageIndex]),
           Positioned(top: MediaQuery.of(context).size.height/1.25,
               right: 5,left:5,child: buildMyNavBar(context)),
-          // Positioned(top: MediaQuery.of(context).size.height/1.30,left: MediaQuery.of(context).size.width/2.35,
-          //     child: FloatingActionButton.extended(onPressed: (){}, label: Icon(Icons.person),elevation: 5,)),
-        ],
+            ],
       ),
     );
   }
 
+  /// bottom navigation bar of travelr
   Container buildMyNavBar(BuildContext context) {
     return Container(
       height: 80,
@@ -154,26 +145,6 @@ class _UserHomeState extends State<UserHome> {
                 size: 35,
               ),
             ),const Text('Search')]),
-          // Column(children:[
-          //   IconButton(
-          //     enableFeedback: false,
-          //     onPressed: () {
-          //       // setState(() {
-          //       //   pageIndex = 2;
-          //       // });
-          //     },
-          //     icon: pageIndex == 2
-          //         ? const Icon(
-          //       Icons.filter_none,
-          //       color: Colors.transparent,
-          //       size: 35,
-          //     )
-          //         : const Icon(
-          //       Icons.filter_none,
-          //       color: Colors.transparent,
-          //       size: 35,
-          //     ),
-          //   ),const Text('')]),
           Column(children:[
             IconButton(
               enableFeedback: false,
@@ -220,6 +191,7 @@ class _UserHomeState extends State<UserHome> {
   }
 }
 
+///Qr code display of user
 class QrTraveller extends StatefulWidget {
   const QrTraveller({required this.user});
   final NewUser user;
@@ -231,9 +203,11 @@ class QrTraveller extends StatefulWidget {
 class _QrTravellerState extends State<QrTraveller> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: QrImageView(data: widget.user.username ,version: QrVersions.auto,
-        size: MediaQuery.of(context).devicePixelRatio,),
+    return Scaffold(
+      body: Container(height: MediaQuery.of(context).size.height/1.5,width: MediaQuery.of(context).size.width/1.5,
+        child: QrImageView(data: widget.user.username ,version: QrVersions.auto,
+          size: MediaQuery.of(context).size.height/5,),
+      ),
     );
   }
 }

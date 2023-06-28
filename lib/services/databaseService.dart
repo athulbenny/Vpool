@@ -1,9 +1,8 @@
 import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
 import '../models/user.dart';
 
-
+///calss holds all the databse services
 
 class UserDatabaseService {
 
@@ -78,12 +77,13 @@ class JourneyDatabaseService{
 
   Future addAdminJourneyDataInUser(String email,String startingtime, String endingtime,
       String startingloc, String endingloc, String numseats, String date,
-      String desc,String journeyid,String slat,String slong,String elat,String elong) async {
+      String desc,String journeyid,String slat,String slong,String elat,String elong,String price) async {
     return await _usercollection.doc(email).collection('journey').doc(journeyid).set({
       "email":email,
       "startingtime": startingtime,
       "endingtime": endingtime,
       'date': date,
+      "price":price,
       'startingloc': startingloc,
       "endingloc": endingloc,
       "startlat":slat,
@@ -98,12 +98,13 @@ class JourneyDatabaseService{
 
   Future addAdminJourneyDataInJourney(String email,String startingtime, String endingtime,
       String startingloc, String endingloc, String numseats, String date,
-      String desc,String journeyid,String slat,String slong,String elat,String elong) async {
+      String desc,String journeyid,String slat,String slong,String elat,String elong,String price) async {
     return await _journeycollection.doc(journeyid).set({
       "email":email,
       "startingtime": startingtime,
       "endingtime": endingtime,
       'date': date,
+      "price":price,
       'startingloc': startingloc,
       "endingloc": endingloc,
       "numseats": numseats,
@@ -120,14 +121,21 @@ class JourneyDatabaseService{
   Stream<List<Journey>> get journeylist{
     return _journeycollection.snapshots().map(_journeyListFromDatabase );
   }
-  List<Journey> _journeyListFromDatabase(QuerySnapshot snapshot){
-    return snapshot.docs.map((usersnapshot){
-      Map<String,dynamic> _journeylist = jsonDecode(jsonEncode(usersnapshot.data()));
+  List<Journey> _journeyListFromDatabase(QuerySnapshot snapshot) {
+    return snapshot.docs.map((usersnapshot) {
+      Map<String, dynamic> _journeylist = jsonDecode(
+          jsonEncode(usersnapshot.data()));
       print("Journey is " + _journeylist.toString());
-      return Journey(startingtime: _journeylist["startingtime"],endingtime: _journeylist["endingtime"]??"",
-          date: _journeylist["date"]??"",startingloc: _journeylist["startingloc"]??"",
-          endingloc: _journeylist["endingloc"]??"", numseats: _journeylist["numseats"]??"",
-          email: _journeylist["email"]??"",remseats: _journeylist["remseats"]??"",journeyid: _journeylist["journeyid"]??"");
+      return Journey(startingtime: _journeylist["startingtime"],
+          endingtime: _journeylist["endingtime"] ?? "",
+          date: _journeylist["date"] ?? "",
+          startingloc: _journeylist["startingloc"] ?? "",
+          endingloc: _journeylist["endingloc"] ?? "",
+          numseats: _journeylist["numseats"] ?? "",
+          email: _journeylist["email"] ?? "",
+          price: _journeylist["price"]??"",
+          remseats: _journeylist["remseats"] ?? "",
+          journeyid: _journeylist["journeyid"] ?? "");
     }).toList();
   }
 
@@ -162,13 +170,15 @@ class JourneyDriverTravellerConnection {
     });
   }
 
-  Future AddAdminJourneyData(String email, String startingloc, String endingloc,
-      String numseats, String journeyid, String slat, String slong, String elat,
-      String elong) async {
+  Future AddAdminJourneyData(String date,String email, String startingloc, String endingloc,
+      String numseats, String journeyid, String startingtime, String endingtime) async {
     return await _usercollection.doc(email).collection('journey')
         .doc(journeyid)
         .set({
+      "date": date,
       "email": email,
+      "startingtime":startingtime,
+      "endingtime":endingtime,
       'startingloc': startingloc,
       "endingloc": endingloc,
       "numseats": numseats,
@@ -214,7 +224,6 @@ class JourneyDriverTravellerConnection {
 
 }
 
-///////////////////////////////////////////////////////////////////////////////////////
 class AllJourneyTravellerDatabaseService {
   String useremail;
 
@@ -241,13 +250,21 @@ class AllJourneyTravellerDatabaseService {
           isstart: _user["isstart"]??"",
           isnotified: _user["isnotified"]??"",
           driverid: _user["driverid"]??"",
+          otp: _user["otp"]??"",
+          startingtime: _user["startingtime"]??"",
+          endingtime: _user["endingtime"]??"",
           distance: _user["distance"]??"");
     }).toList();
   }
 
-  Future updateDriverJStartData(String journeyid)async{
+  Future updateDriverJSStartData(String journeyid)async{
     return await _usercollection.doc(useremail).collection('journey').doc(journeyid).update(
-      {"isstart":"1",});
+      {"isstart":"true","isend":"false"});
+  }
+
+  Future updateDriverJEStartData(String journeyid)async{
+    return await _usercollection.doc(useremail).collection('journey').doc(journeyid).update(
+        {"isend":"true",});
   }
 
 }
@@ -271,6 +288,8 @@ class AllJourneyDriverDatabaseService {
       Map<String, dynamic> _user = jsonDecode(jsonEncode(usersnapshot.data()));
       print("journey travelling users is" + _user.toString());
       return Travel(email: _user["driverid"] ?? "",
+          startingtime: _user["startingtime"]??"",
+          endingtime: _user["endingtime"]??"",
           nofseats: _user["numseats"] ?? "",
           date: _user["date"] ?? "",
           endloc: _user["endingloc"] ?? "",
@@ -314,17 +333,31 @@ class AdminJourneyDatabaseService {
           elong: _user["endlong"] ?? "",
           journeyid: _user["journeyid"] ?? "",
           isjoined: _user["isjoined"]??"",
+          otp:_user["otp"]??"",
           isleaved: _user["isleaved"]??"");
     }).toList();
   }
 
-  Future updateDriverJourneyDataInUser(String isjoined,String tremail) async {
+  Future updateDriverJourneyDataInUser(String isjoined,String tremail,String otp) async {
     return await _usercollection.doc(useremail).collection('journey').doc(
         journeyid).collection('coriders').doc(tremail).update({
       "isjoined": isjoined,
+      'isleaved':'false',
+      'otp': otp
     });
   }
-
+  Future updateDriverJourneyDistanceDataOtp(String otp) async {
+    return await _usercollection.doc(useremail).collection('journey').doc(
+        journeyid).update({
+      "otp": otp,
+    });
+  }
+  Future updateDriverJourneyDataInUsers(String tremail) async {
+    return await _usercollection.doc(useremail).collection('journey').doc(
+        journeyid).collection('coriders').doc(tremail).update({
+      'isleaved':'true',
+    });
+  }
   Future updateDriverJourneyDistanceData(String distance) async {
     return await _usercollection.doc(useremail).collection('journey').doc(
         journeyid).update({

@@ -4,9 +4,8 @@ import 'package:table_calendar/table_calendar.dart';
 import '../../../models/user.dart';
 import '../../../services/databaseService.dart';
 
-import 'package:intl/intl.dart';
 
-
+///page for adding journey details by the driver
 class OwnerSearch extends StatefulWidget {
   const OwnerSearch({required this.user});
   final NewUser user;
@@ -25,37 +24,28 @@ class _OwnerSearchState extends State<OwnerSearch> {
   TextEditingController numseats=TextEditingController();
   TextEditingController lat=TextEditingController();
   TextEditingController long=TextEditingController();
+  TextEditingController price=TextEditingController();
 
-  //late double _height,_width;
   late String startlat,endlat,startlong,endlong;
-  //late String _setTime;//, _setDate;
   late String _hour, _minute, _time,_am;
   late String dateTime;
   DateTime selectedDate = DateTime.now();
   TimeOfDay selectedTime = TimeOfDay(hour: 00, minute: 00);
-
   var timerx,timery;
 
-  //final AuthService _auth=AuthService();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
         child: Container(
           //color: Colors.blue[200],
           padding: EdgeInsets.only(
-            //   left: MediaQuery
-            //       .of(context)
-            //       .size
-            //       .height / 100,
-            //   right: MediaQuery
-            //       .of(context)
-            //       .size
-            //       .height / 100,
-            top: MediaQuery.of(context).size.height / 5,),
+            top: MediaQuery.of(context).size.height / 10,),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              ///staring location
               ListTile(
                 leading: Container(width: MediaQuery.of(context).size.width / 1.3,
                   child: TextField(readOnly: true,
@@ -72,6 +62,7 @@ class _OwnerSearchState extends State<OwnerSearch> {
                       },icon: Icon(Icons.location_on_outlined),),
                       border: OutlineInputBorder(),
                     ),),),),
+              ///ending location
               ListTile(
                 leading: Container(width: MediaQuery.of(context).size.width / 1.3,
                   child: TextField(readOnly: true,
@@ -88,6 +79,8 @@ class _OwnerSearchState extends State<OwnerSearch> {
                       },icon: Icon(Icons.location_city),),
                       border: OutlineInputBorder(),
                     ),),),),
+
+              ///adding date
               ListTile(
                 leading: Container(decoration: const BoxDecoration(
                   //border: Border.all(color: Colors.black87)
@@ -106,6 +99,7 @@ class _OwnerSearchState extends State<OwnerSearch> {
                       },icon: Icon(Icons.date_range),),
                       border: OutlineInputBorder(),
                     ),),),),
+              ///adding starting time
               ListTile(
                 leading: Container(decoration: BoxDecoration(),
                   width: MediaQuery.of(context).size.width / 1.3,
@@ -121,6 +115,7 @@ class _OwnerSearchState extends State<OwnerSearch> {
                       },icon: Icon(Icons.access_time_rounded),),
                       border: OutlineInputBorder(),
                     ),),),),
+              ///adding ending time
               ListTile(
                 leading: Container(decoration: BoxDecoration(),
                   width: MediaQuery.of(context).size.width / 1.3,
@@ -135,8 +130,20 @@ class _OwnerSearchState extends State<OwnerSearch> {
                         });
                       },icon: Icon(Icons.more_time_rounded),),
                       border: OutlineInputBorder(),
-                    ),),),
-              ),ListTile(
+                    ),),),),
+              ///adding price for individual seat
+              ListTile(
+                leading: Container(decoration: BoxDecoration(),
+                  width: MediaQuery.of(context).size.width / 1.3,
+                  child: TextField(
+                    controller: price,
+                    decoration: const InputDecoration(
+                      labelText: 'price per seat',hintText: 'type here',
+                      icon: Icon(Icons.price_change_rounded),
+                      border: OutlineInputBorder(),
+                    ),),),),
+              ///adding number of seats
+              ListTile(
                 leading: Container(decoration: BoxDecoration(),
                   width: MediaQuery.of(context).size.width / 1.3,
                   child: TextField(
@@ -146,6 +153,7 @@ class _OwnerSearchState extends State<OwnerSearch> {
                       icon: Icon(Icons.numbers),
                       border: OutlineInputBorder(),
                     ),),),),
+              ///adding description not necessary
               ListTile(
                 leading: Container(decoration: BoxDecoration(),
                   width: MediaQuery.of(context).size.width / 1.3,
@@ -156,7 +164,8 @@ class _OwnerSearchState extends State<OwnerSearch> {
                       icon: Icon(Icons.message),
                       border: OutlineInputBorder(),
                     ),),),),
-              ElevatedButton(onPressed: ()async {
+              ElevatedButton(onPressed: ()async {///buttton for adding journey
+                ///creating a uniquie id
                 String datetime=DateTime.now().toString();
                 String datetime1=datetime.split(' ').first.split('-').first;
                 String datetime2=datetime.split(' ').first.split('-').elementAt(1);
@@ -169,10 +178,14 @@ class _OwnerSearchState extends State<OwnerSearch> {
                 print(journeyid);
                 dynamic result =await JourneyDatabaseService().addAdminJourneyDataInUser(widget.user.username,
                     starttime.text, endtime.text, startLoc.text,  endLoc.text,
-                    numseats.text, tdate.text, desc.text,journeyid,startlat,startlong,endlat,endlong);
+                    numseats.text, tdate.text, desc.text,journeyid,startlat,startlong,endlat,endlong,price.text);
                 dynamic result1 =await JourneyDatabaseService().addAdminJourneyDataInJourney(widget.user.username,
                     starttime.text, endtime.text, startLoc.text,  endLoc.text,
-                    numseats.text, tdate.text, desc.text,journeyid,startlat,startlong,endlat,endlong);
+                    numseats.text, tdate.text, desc.text,journeyid,startlat,startlong,endlat,endlong,price.text);
+                if(result!=null){
+                  startLoc.clear();endLoc.clear();endtime.clear();starttime.clear();
+                  numseats.clear();tdate.clear();desc.clear();price.clear();
+                }
               }, child: Text('Add'))
             ],
           ),
@@ -180,6 +193,8 @@ class _OwnerSearchState extends State<OwnerSearch> {
       ),
     );
   }
+
+  ///timer of the page, imported
   Future<dynamic?> timerselect() async{
   final TimeOfDay? picked = await showTimePicker(
   context: context,
@@ -193,27 +208,22 @@ class _OwnerSearchState extends State<OwnerSearch> {
   _am= selectedTime.period.toString();
   _time = _hour + ':' + _minute;
   print(_time);
-  // _timeController.text = formatDate(
-  //     DateTime(2019, 08, 1, selectedTime.hour, selectedTime.minute),
-  //     [hh, ':', nn, " ", am]).toString();
   });
   }return _time;
 }
 }
 
+///calendar of the page, imported
 class Calender extends StatefulWidget {
   const Calender({required this.locctrl});
   final TextEditingController locctrl;
-
   @override
   State<Calender> createState() => _CalenderState();
 }
-
 class _CalenderState extends State<Calender> {
   CalendarFormat _calendarFormat = CalendarFormat.month;
   DateTime _focusedDay = DateTime.utc(DateTime.now().year,DateTime.now().month,DateTime.now().day+1);//DateTime.now();
   DateTime? _selectedDay;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

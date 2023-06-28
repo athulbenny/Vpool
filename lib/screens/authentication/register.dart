@@ -25,7 +25,7 @@ class _RegisterState extends State<Register> {
   TextEditingController rcbook=new TextEditingController();
 
   String dropdownvalue = 'traveller',error="";
-  var users = ['traveller','driver','dual'];
+  var users = ['traveller','owner','dual'];
   String newval="traveller";bool validate=false,visible=false;
   @override
   Widget build(BuildContext context) {
@@ -77,7 +77,7 @@ class _RegisterState extends State<Register> {
                         controller: passsord1,
                         decoration: InputDecoration(
                             hintText: 'Password',
-                            errorText: validate?"password must be atlest eight character long":""
+                            errorText: validate?"password must be atleast eight character long":""
                         ),
                       ),
                     ),]),SizedBox(height: 20,),
@@ -180,6 +180,9 @@ class _RegisterState extends State<Register> {
                         setState(() {
                           error="register failed";
                         });
+                      }else{
+                        email.clear();passsord1.clear();username1.clear();phno.clear();
+                        adhar.clear();drl.clear();rcbook.clear();vno.clear();
                       }
                     }
 

@@ -5,10 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:http/http.dart' as http;
 import 'package:latlong2/latlong.dart';
-
 import '../../../models/user.dart';
 
-
+///open street map
 class OpenStreetMapSearchAndPick extends StatefulWidget {
   final NewUser user;final TextEditingController loctra;
   final TextEditingController lat,long;
@@ -53,9 +52,6 @@ class _OpenStreetMapSearchAndPickState
   Timer? _debounce;
   var client = http.Client();
 
-
-
-
   void setNameCurrentPos() async {
     double latitude = _mapController.center.latitude;
     double longitude = _mapController.center.longitude;
@@ -88,11 +84,9 @@ class _OpenStreetMapSearchAndPickState
     }
     String url =
         'https://nominatim.openstreetmap.org/reverse?format=json&lat=$latitude&lon=$longitude&zoom=18&addressdetails=1';
-
     var response = await client.post(Uri.parse(url));
     var decodedResponse =
     jsonDecode(utf8.decode(response.bodyBytes)) as Map<dynamic, dynamic>;
-
     _searchController.text =
         decodedResponse['display_name'] ?? "MOVE TO CURRENT POSITION";
     setState(() {});
@@ -109,11 +103,9 @@ class _OpenStreetMapSearchAndPickState
         var client = http.Client();
         String url =
             'https://nominatim.openstreetmap.org/reverse?format=json&lat=${event.center.latitude}&lon=${event.center.longitude}&zoom=18&addressdetails=1';
-
         var response = await client.post(Uri.parse(url));
         var decodedResponse = jsonDecode(utf8.decode(response.bodyBytes))
         as Map<dynamic, dynamic>;
-
         _searchController.text = decodedResponse['display_name'];
         setState(() {});
       }
@@ -130,7 +122,6 @@ class _OpenStreetMapSearchAndPickState
   @override
   Widget build(BuildContext context) {
     double latx=0, lngx=0;
-    // String? _autocompleteSelection;
     OutlineInputBorder inputBorder = OutlineInputBorder(
       borderSide: BorderSide(color: widget.buttonColor),
     );
@@ -376,7 +367,7 @@ class _OpenStreetMapSearchAndPickState
     return PickedData(center, displayName);
   }
 
-
+///for displaying alert dialog box for confirmation
   Future<void> alert(latitude,longitude,address) async {
     return showDialog<void>(
         context: context,
@@ -396,11 +387,6 @@ class _OpenStreetMapSearchAndPickState
               ),TextButton(
                 child:  Text('save'),
                 onPressed: () async{
-
-                 // print("length is"+length.toString());
-                  // await AdminDatabaseService(
-                  //     adusername: widget.user.username).updateUserTaskData(
-                  //     widget.Tdate, address, latitude.toString(), longitude.toString(), length, widget.puser, "0");
                   widget.loctra.text=address;
                   widget.lat.text=latitude.toString();
                   widget.long.text=longitude.toString();

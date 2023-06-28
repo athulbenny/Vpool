@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../../../models/user.dart';
 import '../../../services/databaseService.dart';
 
+///user bookind details page, this page show the detials of all the journye the booked
 class UserBookings extends StatefulWidget {
   const UserBookings({required this.user});
   final NewUser user;
@@ -21,6 +22,7 @@ class _UserBookingsState extends State<UserBookings> {
   }
 }
 
+///collecting details of driver
 class DriverDetails extends StatefulWidget {
   const DriverDetails({required this.user});
   final NewUser user;
@@ -33,7 +35,7 @@ class _DriverDetailsState extends State<DriverDetails> {
   @override
   Widget build(BuildContext context) {
     final driverlist = Provider.of<List<Rider>?>(context)??[];
-    print("driverloist is "+ driverlist.length.toString());
+    print("driverlist is "+ driverlist.length.toString());
     return ListView.separated(
       itemCount: driverlist.length,
       itemBuilder: (context,index){
@@ -60,8 +62,15 @@ class _DriverDetailsState extends State<DriverDetails> {
               ),
               Row(
                 children: [
+                  Expanded(flex:1,child:Text('journey time'),),
+                  Expanded(flex: 1,child: Text(driverlist[index].startingtime)),
+                  Expanded(flex: 1,child: Text(driverlist[index].endingtime)),
+                ],
+              ),
+              Row(
+                children: [
                   Expanded(flex:1,child:Text('driver mail'),),
-                  Expanded(flex: 1,child: Text(driverlist[index].email)),
+                  Expanded(flex: 1,child: Text(driverlist[index].driverid)),
                 ],
               ),
             ],

@@ -1,9 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:untitled1/services/databaseService.dart';
-
 import '../../../models/user.dart';
 
+///user notification, notify the user about the journey details
 class UserNotification extends StatefulWidget {
   const UserNotification({required this.user});
   final NewUser user;
@@ -22,6 +24,7 @@ class _UserNotificationState extends State<UserNotification> {
   }
 }
 
+///collecting journey details
 class TravelNotification extends StatefulWidget {
   const TravelNotification({required this.user});
   final NewUser user;
@@ -31,17 +34,17 @@ class TravelNotification extends StatefulWidget {
 }
 
 class _TravelNotificationState extends State<TravelNotification> {
-
-
   List<Rider> notif=[];
   @override
   Widget build(BuildContext context) {
+    notif.clear();
     final traveljourneylist = Provider.of<List<Rider>?>(context) ?? [];
-    print(traveljourneylist.length);
+    print("length isss"+traveljourneylist.length.toString());
     for(int i=0;i<traveljourneylist.length;i++){
       if(traveljourneylist[i].isstart!=traveljourneylist[i].isnotified){
-        notif.add(traveljourneylist[i]);
+        notif.add(traveljourneylist[i]);//// i++;
         notif=[...{...notif}];
+        print("length of notif"+notif.length.toString());
       }
     }
     return Column(
@@ -71,6 +74,12 @@ class _TravelNotificationState extends State<TravelNotification> {
                            Expanded(flex: 1,child: Text(notif[index].distance+' KM')),
                          ],
                        ),
+                       Row(
+                         children: [
+                           Expanded(flex:1,child:Text('otp '),),
+                           Expanded(flex: 1,child: Text(notif[index].otp)),
+                         ],
+                       ),
                      ],
                    ),
                  );
@@ -78,10 +87,13 @@ class _TravelNotificationState extends State<TravelNotification> {
               return Container(height: 5);
           }, itemCount: notif.length),
         ),
-        ElevatedButton(onPressed: (){
-          print(notif[0].distance);
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(notif[0].distance.toString())));
-        }, child: Text(''))
+        // TextButton(onPressed: (){
+        //   print(notif[0].distance);
+        //   setState(() {
+        //     notif.clear();
+        //   });
+        //   //ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(notif[notif.length-1].distance.toString())));
+        // }, child: Text('Refresh'))
       ],
     );
   }

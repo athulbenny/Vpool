@@ -1,10 +1,18 @@
 import 'package:flutter/material.dart';
-
+import 'package:untitled1/main.dart';
+import 'package:untitled1/screens/home/owner/addjourney.dart';
+import 'package:untitled1/screens/home/owner/ownerbooking.dart';
+import 'package:untitled1/screens/home/owner/ownerhome.dart';
+import 'package:untitled1/screens/home/owner/ownerpaymnet.dart';
+import 'package:untitled1/screens/home/traveller/travelleruserhome.dart';
+import 'package:untitled1/screens/home/traveller/userbookings.dart';
+import 'package:untitled1/screens/home/traveller/usernotification.dart';
+import 'package:untitled1/screens/home/traveller/usersearchresult.dart';
 import '../../../models/user.dart';
 import '../../../services/auth.dart';
+import '../traveller/userhome.dart';
 
-
-
+/// initial page of a dual user, dual uer can act as travller and driver
 class DualHome extends StatefulWidget {
   const DualHome({required this.user});
   final NewUser user;
@@ -16,18 +24,31 @@ class DualHome extends StatefulWidget {
 
 class _DualHomeState extends State<DualHome> {
   int pageIndex = 0;
+  Icon icon= Icon(Icons.person);
   final AuthService _auth =AuthService();
-
+  int v=0;
   @override
   void initState() {
     super.initState();}
 
   @override
   Widget build(BuildContext context) {
-    final pages = [
-
-      OwnerSearch()
+    ///pages of dual user as travler
+    final userpages = [
+      MyUserHome(user: widget.user),
+      MySearch(user: widget.user),
+      UserNotification(user: widget.user),
+      UserBookings(user: widget.user)
     ];
+    ///pages of dual user as driver
+    final ownerpages = [
+      DriverHome(),
+      OwnerSearch(user: widget.user),
+      OwnerPayment(user: widget.user),
+      OwnerBooking(user: widget.user)
+    ];
+    List list=[userpages,ownerpages];
+
     return Scaffold(
 
       appBar: AppBar(
@@ -36,10 +57,10 @@ class _DualHomeState extends State<DualHome> {
               bottomRight: Radius.circular(25),
               bottomLeft: Radius.circular(25)),
         ), toolbarHeight: MediaQuery.of(context).size.height/15,
-        title: Center(child:
+        title:const  Center(child:
         Text('V-Pool',style: TextStyle(
             fontSize: 25,fontWeight:FontWeight.w900),)),
-        backgroundColor: Colors.green,
+        backgroundColor: topcolor,
         centerTitle: true,
         leading: BackButton(onPressed: (){
           //Navigator.of(context).pushNamed(Login.id);
@@ -52,12 +73,10 @@ class _DualHomeState extends State<DualHome> {
                     value: 0,
                     child: Text("My Account"),
                   ),
-
                   const PopupMenuItem<int>(
                     value: 1,
-                    child: Text("Settings"),
+                    child: Text("My Qr"),
                   ),
-
                   const PopupMenuItem<int>(
                     value: 2,
                     child: Text("Logout"),
@@ -68,8 +87,9 @@ class _DualHomeState extends State<DualHome> {
                 if(value == 0){
                   print("My account menu is selected.");
                 }else if(value == 1) {
-                  print("My settings menu is selected.");
-                }else if(value == 2){
+                  Navigator.push(context,MaterialPageRoute(builder: (context){
+                    return QrTraveller(user: widget.user,);
+                }));}else if(value == 2){
                   await _auth.signOut();                }
               }
           ),
@@ -78,21 +98,30 @@ class _DualHomeState extends State<DualHome> {
       body: Stack(
         children: [
           Container(padding: EdgeInsets.only(left: MediaQuery.of(context).size.height/50,right: MediaQuery.of(context).size.height/50),
-              height: MediaQuery.of(context).size.height,child: pages[pageIndex]),
+              height: MediaQuery.of(context).size.height,child: list[v][pageIndex]),
           Positioned(top: MediaQuery.of(context).size.height/1.25,
               right: 5,left:5,child: buildMyNavBar(context)),
+          ///following floating action button is responsible fr naviagting btwn traveler and driver
           Positioned(top: MediaQuery.of(context).size.height/1.30,left: MediaQuery.of(context).size.width/2.35,
-              child: FloatingActionButton.extended(onPressed: (){}, label: Icon(Icons.person),elevation: 5,)),
+              child: FloatingActionButton.extended(onPressed: (){
+                print(v);
+                if(v==0){ v=1; icon = Icon(Icons.car_crash_sharp);print("owner");}
+                else {v=0;icon=Icon(Icons.person);print("travller");}
+                setState(() {
+                  print(v);
+                });
+              }, label: icon,elevation: 5,)),
         ],
       ),
     );
   }
 
+  ///bottom navigation bar of dual user
   Container buildMyNavBar(BuildContext context) {
     return Container(
       height: 80,
       decoration: BoxDecoration(
-        color: Colors.green,
+        color: bottomColor,
         borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(20),
           topRight: Radius.circular(20),
@@ -143,7 +172,7 @@ class _DualHomeState extends State<DualHome> {
                 color: Colors.white,
                 size: 35,
               ),
-            ),const Text('Search')]),
+            ),v==0? const Text('Search'): const Text('add')]),
           Column(children:[
             IconButton(
               enableFeedback: false,
@@ -152,7 +181,7 @@ class _DualHomeState extends State<DualHome> {
                 //   pageIndex = 2;
                 // });
               },
-              icon: pageIndex == 2
+              icon: pageIndex == 4
                   ? const Icon(
                 Icons.filter_none,
                 color: Colors.transparent,
@@ -169,10 +198,10 @@ class _DualHomeState extends State<DualHome> {
               enableFeedback: false,
               onPressed: () {
                 setState(() {
-                  pageIndex = 3;
+                  pageIndex = 2;
                 });
               },
-              icon: pageIndex == 3
+              icon: pageIndex == 2
                   ? const Icon(
                 Icons.notifications_active,
                 color: Colors.white,
@@ -183,16 +212,16 @@ class _DualHomeState extends State<DualHome> {
                 color: Colors.white,
                 size: 35,
               ),
-            ),const Text('Notification')]),
+            ),v==0? const Text('Notification'): const Text('Payment')]),
           Column(children:[
             IconButton(
               enableFeedback: false,
               onPressed: () {
                 setState(() {
-                  pageIndex = 4;
+                  pageIndex = 3;
                 });
               },
-              icon: pageIndex == 4
+              icon: pageIndex == 3
                   ? const Icon(
                 Icons.person_2,
                 color: Colors.white,
@@ -203,163 +232,10 @@ class _DualHomeState extends State<DualHome> {
                 color: Colors.white,
                 size: 35,
               ),
-            ),const Text('Profile')]),
+            ),const Text('Bookings')]),
         ],
       ),
     );
   }
 }
 
-
-class OwnerSearch extends StatefulWidget {
-  const OwnerSearch({Key? key}) : super(key: key);
-
-  @override
-  State<OwnerSearch> createState() => _OwnerSearchState();
-}
-
-class _OwnerSearchState extends State<OwnerSearch> {
-  TextEditingController startLoc=TextEditingController();
-  TextEditingController endLoc=TextEditingController();
-  TextEditingController tdate=TextEditingController();
-  TextEditingController starttime=TextEditingController();
-  TextEditingController endtime=TextEditingController();
-  TextEditingController desc=TextEditingController();
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: SingleChildScrollView(
-        child: Container(
-          //color: Colors.blue[200],
-          padding: EdgeInsets.only(
-            //   left: MediaQuery
-            //       .of(context)
-            //       .size
-            //       .height / 100,
-            //   right: MediaQuery
-            //       .of(context)
-            //       .size
-            //       .height / 100,
-            top: MediaQuery
-                .of(context)
-                .size
-                .height / 5,),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              ListTile(
-                leading: Container(width: MediaQuery
-                    .of(context)
-                    .size
-                    .width / 1.3,
-                  child: TextField(
-                    controller: startLoc,
-                    decoration: InputDecoration(
-                      labelText: 'Start location',
-                      icon: IconButton(onPressed: (){print("object");},icon: Icon(Icons.location_on_outlined),),
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                ),
-                //trailing: Icon(Icons.restart_alt),
-              ),
-              ListTile(
-                leading: Container(width: MediaQuery
-                    .of(context)
-                    .size
-                    .width / 1.3,
-                  child: TextField(
-                    controller: endLoc,
-                    decoration: InputDecoration(
-                      labelText: 'End location',
-                      icon: IconButton(onPressed: (){print("object");},icon: Icon(Icons.location_city),),
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                ),
-                // trailing: Icon(Icons.restart_alt),
-              ),
-              ListTile(
-                leading: Container(decoration: BoxDecoration(
-                  //border: Border.all(color: Colors.black87)
-                ),
-                  width: MediaQuery
-                      .of(context)
-                      .size
-                      .width / 1.3,
-                  child: TextField(
-                    controller: tdate,
-                    decoration: InputDecoration(
-                      labelText: 'date',
-                      icon: IconButton(onPressed: (){print("object");},icon: Icon(Icons.date_range),),
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                ),
-                // trailing: Icon(Icons.date_range),
-              ),
-              ListTile(
-                leading: Container(decoration: BoxDecoration(
-                  //border: Border.all(color: Colors.black87)
-                ),
-                  width: MediaQuery
-                      .of(context)
-                      .size
-                      .width / 1.3,
-                  child: TextField(
-                    controller: starttime,
-                    decoration: InputDecoration(
-                      labelText: 'start time',
-                      icon: IconButton(onPressed: (){print("object");},icon: Icon(Icons.access_time_rounded),),
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                ),
-                // trailing: Icon(Icons.date_range),
-              ),
-              ListTile(
-                leading: Container(decoration: BoxDecoration(
-                  //border: Border.all(color: Colors.black87)
-                ),
-                  width: MediaQuery
-                      .of(context)
-                      .size
-                      .width / 1.3,
-                  child: TextField(
-                    controller: endtime,
-                    decoration: InputDecoration(
-                      labelText: 'End time',
-                      icon: IconButton(onPressed: (){print("object");},icon: Icon(Icons.more_time_rounded),),
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                ),
-                // trailing: Icon(Icons.date_range),
-              ),
-              ListTile(
-                leading: Container(decoration: BoxDecoration(
-                  //border: Border.all(color: Colors.black87)
-                ),
-                  width: MediaQuery
-                      .of(context)
-                      .size
-                      .width / 1.3,
-                  child: TextField(
-                    controller: desc,
-                    decoration: InputDecoration(
-                      labelText: 'Description',
-                      icon: IconButton(onPressed: (){print("object");},icon: Icon(Icons.message),),
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                ),
-                // trailing: Icon(Icons.date_range),
-              ),
-              ElevatedButton(onPressed: () {}, child: Text('Add'))
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:untitled1/screens/home/traveller/userhome.dart';
 import '../../../main.dart';
 import '../../../models/user.dart';
 import '../../../services/auth.dart';
@@ -7,6 +8,7 @@ import '../../../services/databaseService.dart';
 import '../owner/addjourney.dart';
 import '../owner/openstreetmaplink.dart';
 
+///user search part, display all the trip details as per searching in textbox
 class MySearch extends StatefulWidget {
   const MySearch({required this.user});
   final NewUser user;
@@ -15,10 +17,10 @@ class MySearch extends StatefulWidget {
   State<MySearch> createState() => _MySearchState();
 }
 
+///collecting strating,ending location and date from user
 class _MySearchState extends State<MySearch> {
   @override
   Widget build(BuildContext context) {
-    print("clicked");
     return StreamProvider.value(
         value: JourneyDatabaseService().journeylist,
         initialData: null,
@@ -69,7 +71,6 @@ class _MySearchDataState extends State<MySearchData> {
                         // method to show the search bar
                         showSearch(
                             context: context,
-                            // delegate to customize the search bar
                             delegate: CustomSearchDelegate(searchcont: startLoc,searchTerms: startlocat)
                         );
                       },
@@ -120,16 +121,15 @@ class _MySearchDataState extends State<MySearchData> {
                   ),
                 ),
               ),
-              // trailing: Icon(Icons.date_range),
             ),
             ElevatedButton(onPressed: () async{
               print(vis);
               searchlist=checker(journeylist);
               print(searchlist);setState(() {
                 vis=true;print(vis);
-              });
-
+              });///search button
             }, child: Text('search')),
+            ///displaying details as per searching
             Visibility(
                 visible: vis,
                 child: Container(height: MediaQuery.of(context).size.height/10,
@@ -178,6 +178,7 @@ class _MySearchDataState extends State<MySearchData> {
     );
   }
 
+  ///function for sorting list from db and display the detials that user needs
   List<Journey> checker(journeylist){
     List<Journey> searchlist=[];
     for(int i=0;i<journeylist.length;i++){
@@ -191,12 +192,7 @@ class _MySearchDataState extends State<MySearchData> {
   }
 }
 
-
-
-
-
-////////////////////////////////////////////////////////////////////////////////
-
+///class to display details of selected journey and take user datas
 class SelectJourney extends StatefulWidget {
   const SelectJourney({required this.selected,required this.user});
   final NewUser user;
@@ -230,9 +226,7 @@ class _SelectJourneyState extends State<SelectJourney> {
             fontSize: 25,fontWeight:FontWeight.w900),)),
         backgroundColor: topcolor,
         centerTitle: true,
-        leading: BackButton(onPressed: (){
-          //Navigator.of(context).pushNamed(Login.id);
-        },),
+        leading: BackButton(),
         actions: [
           PopupMenuButton(
               itemBuilder: (context){
@@ -244,7 +238,7 @@ class _SelectJourneyState extends State<SelectJourney> {
 
                   const PopupMenuItem<int>(
                     value: 1,
-                    child: Text("my qr"),
+                    child: Text("My Qr"),
                   ),
 
                   const PopupMenuItem<int>(
@@ -257,8 +251,9 @@ class _SelectJourneyState extends State<SelectJourney> {
                 if(value == 0){
                   print("My account menu is selected.");
                 }else if(value == 1) {
-                  print("My settings menu is selected.");
-                }else if(value == 2){
+                  Navigator.push(context,MaterialPageRoute(builder: (context){
+                    return QrTraveller(user: widget.user,);
+                }));}else if(value == 2){
                   await _auth.signOut();
                 }
               }
@@ -276,6 +271,12 @@ class _SelectJourneyState extends State<SelectJourney> {
           Row(
             children: [
               Expanded(flex:1,child:Text('Remaining seats'),),
+              Expanded(flex: 1,child: Text(widget.selected.remseats)),
+            ],
+          ),
+          Row(
+            children: [
+              Expanded(flex:1,child:Text('Price for each seat'),),
               Expanded(flex: 1,child: Text(widget.selected.remseats)),
             ],
           ),
@@ -321,7 +322,7 @@ class _SelectJourneyState extends State<SelectJourney> {
                   child: TextField(readOnly: true,
                     controller: endingloc,
                     decoration: InputDecoration(
-                      labelText: 'Start location',
+                      labelText: 'Ending location',
                       icon: IconButton(onPressed: ()async{
                         await showDialog(context: context, builder: (_){
                           return Dialog(
@@ -346,15 +347,16 @@ class _SelectJourneyState extends State<SelectJourney> {
             double remseats=numseats1-reqseats;
             if(remseats>=0){
         await JourneyDriverTravellerConnection(
-            driverid: widget.selected.email).UpdateDriverJourneyDataInJourney(remseats.toString(),widget.selected.journeyid);
+            driverid: widget.selected.email).UpdateDriverJourneyDataInJourney(remseats.toString(),
+                      widget.selected.journeyid);
         await JourneyDriverTravellerConnection(
             driverid: widget.selected.email).AddTravellerJourneyData(
                         widget.user.username, startingloc.text, endingloc.text,
                         numseats.text,widget.selected.journeyid,startlat,startlong,endlat,endlong);
         await JourneyDriverTravellerConnection(
             driverid: widget.selected.email).AddAdminJourneyData(
-                        widget.user.username, startingloc.text, endingloc.text,
-                        numseats.text,widget.selected.journeyid,startlat,startlong,endlat,endlong);
+                        widget.selected.date,widget.user.username, startingloc.text, endingloc.text,
+                        numseats.text,widget.selected.journeyid,widget.selected.startingtime,widget.selected.endingtime);
         await JourneyDriverTravellerConnection(
             driverid: widget.selected.email).AddAdminJourneyUserData(widget.selected.date,
                         widget.user.username, startingloc.text, endingloc.text,
@@ -368,25 +370,21 @@ class _SelectJourneyState extends State<SelectJourney> {
         ],
       ),
     );
-  }
+  }///clearing text feilds
   Future<void> clear() async {
     startingloc.text="";endingloc.text="";numseats.text="";
   }
 }
 
-////////////////////////////////////////////////////////////////////////////////
 
-
-
-
+///class that perform search operation
 class CustomSearchDelegate extends SearchDelegate {
   CustomSearchDelegate({required this.searchcont,required this.searchTerms});
 // Demo list to show querying
 final TextEditingController searchcont;
   final List<String> searchTerms;
 
-// first overwrite to
-// clear the search text
+/// first overwrite toclear the search text
   @override
   List<Widget>? buildActions(BuildContext context) {
     return [
@@ -399,7 +397,7 @@ final TextEditingController searchcont;
     ];
   }
 
-// second overwrite to pop out of search menu
+/// second overwrite to pop out of search menu
   @override
   Widget? buildLeading(BuildContext context) {
     return IconButton(
@@ -410,7 +408,7 @@ final TextEditingController searchcont;
     );
   }
 
-// third overwrite to show query result
+/// third overwrite to show query result
   @override
   Widget buildResults(BuildContext context) {
     List<String> matchQuery = [];
@@ -430,8 +428,7 @@ final TextEditingController searchcont;
     );
   }
 
-// last overwrite to show the
-// querying process at the runtime
+/// last overwrite to show the querying process at the runtime
   @override
   Widget buildSuggestions(BuildContext context) {
     List<String> matchQuery = [];

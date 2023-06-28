@@ -4,6 +4,7 @@ import 'package:untitled1/models/user.dart';
 import 'package:untitled1/screens/home/traveller/usersearchresult.dart';
 import 'package:untitled1/services/databaseService.dart';
 
+///travaller home page, this page show details of all the journey they can select
 class MyUserHome extends StatefulWidget {
   const MyUserHome({required this.user});
   final NewUser user;
@@ -22,6 +23,7 @@ class _MyUserHomeState extends State<MyUserHome> {
   }
 }
 
+///collecting details of all the journey form db
 class AllJourneys extends StatefulWidget {
   const AllJourneys({required this.user});
   final NewUser user;

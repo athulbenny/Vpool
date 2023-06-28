@@ -6,6 +6,7 @@ import 'package:untitled1/services/databaseService.dart';
 import '../../models/user.dart';
 import 'dual/dualhome.dart';
 
+/// home page, this page deviates travllers to travler page,  owner to driver page and dual to dual user page
 class Home extends StatefulWidget {
   const Home({required this.user});
   final NewUser user;
@@ -47,6 +48,7 @@ class _UserSwitchState extends State<UserSwitch> {
       }
     }
     print(userdesignation);
+    ///divider
     if (userdesignation == '0') {
       return UserHome(user: widget.user);
     } else if (userdesignation == '1'){

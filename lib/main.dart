@@ -6,23 +6,25 @@ import 'package:untitled1/services/auth.dart';
 import 'package:untitled1/models/user.dart';
 
 
-
+///colors to top app bar and bottom naviagtion bar
 Color topcolor=Colors.red,bottomColor=Colors.red;
 
-void main() async{
+///main function
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
-      options: FirebaseOptions(apiKey: 'AIzaSyDDmABkeycFEBf3XeAirjJRlHS7IYfUBc4',
-      appId: '1:607586358441:android:13fd17f9ad35095583c5b8',
-      messagingSenderId: '607586358441', projectId: 'miniproject-d04f9'));
+      options: const FirebaseOptions(
+          apiKey: 'AIzaSyDytZzMm5qumYwjXdICEjJwTSM5I3xyM94',
+          appId: '1:503477268361:android:992eaf60535859fce47b58',
+          messagingSenderId: '503477268361', projectId: 'miniproject-beea5')
+  );
 
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
-
-  // This widget is the root of your application.
+  /// This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return StreamProvider<NewUser?>.value(
