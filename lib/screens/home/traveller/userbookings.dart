@@ -39,46 +39,74 @@ class _DriverDetailsState extends State<DriverDetails> {
     return ListView.separated(
       itemCount: driverlist.length,
       itemBuilder: (context,index){
-        return Card(elevation: 10,
-          child: Column(
-            children: [
-              Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly,children: [
-                Expanded(flex:1,child:Text('journey'),),
-                Expanded(flex: 2,child: Text(driverlist[index].startloc)),
-                Expanded(flex:1,child:Text('------->'),),
-                Expanded(flex:2,child: Text(driverlist[index].endloc))
-              ],),
-              Row(
-                children: [
-                  Expanded(flex:1,child:Text('journey date'),),
-                  Expanded(flex: 1,child: Text(driverlist[index].date)),
-                ],
-              ),
-              Row(
-                children: [
-                  Expanded(flex:1,child:Text('number of seats booked'),),
-                  Expanded(flex: 1,child: Text(driverlist[index].nofseats)),
-                ],
-              ),
-              Row(
-                children: [
-                  Expanded(flex:1,child:Text('journey time'),),
-                  Expanded(flex: 1,child: Text(driverlist[index].startingtime)),
-                  Expanded(flex: 1,child: Text(driverlist[index].endingtime)),
-                ],
-              ),
-              Row(
-                children: [
-                  Expanded(flex:1,child:Text('driver mail'),),
-                  Expanded(flex: 1,child: Text(driverlist[index].driverid)),
-                ],
-              ),
-            ],
-          )
+        return GestureDetector(
+          child: Card(elevation: 10,
+            child: Column(
+              children: [
+                Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly,children: [
+                  Expanded(flex:1,child:Text('journey'),),
+                  Expanded(flex: 2,child: Text(driverlist[index].startloc)),
+                  Expanded(flex:1,child:Text('------->'),),
+                  Expanded(flex:2,child: Text(driverlist[index].endloc))
+                ],),
+                Row(
+                  children: [
+                    Expanded(flex:1,child:Text('journey date'),),
+                    Expanded(flex: 1,child: Text(driverlist[index].date)),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Expanded(flex:1,child:Text('number of seats booked'),),
+                    Expanded(flex: 1,child: Text(driverlist[index].nofseats)),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Expanded(flex:1,child:Text('journey time'),),
+                    Expanded(flex: 1,child: Text(driverlist[index].startingtime)),
+                    Expanded(flex: 1,child: Text(driverlist[index].endingtime)),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Expanded(flex:1,child:Text('driver mail'),),
+                    Expanded(flex: 1,child: Text(driverlist[index].driverid)),
+                  ],
+                ),
+              ],
+            )
+          ),
+          onLongPress: () async{
+            showDialog(context: context, builder: (builder){
+              return AlertDialog(
+                title: TextButton(child: Text('Delete'),
+                  onPressed: () async{
+                  print(driverlist[index].email);
+                    await AllJourneyTravellerDatabaseService(useremail: widget.user.username)
+                        .deleteTravellerJourneyData(driverlist[index].journeyid,driverlist[index].driverid);
+                  },),
+              );
+            });
+          },
         );
       },
       separatorBuilder: (context,index){
-        return Container(padding: EdgeInsets.all(5 ),);
+        return Container(padding: EdgeInsets.all(5 ),
+        child: ElevatedButton(onPressed: (){
+           showDialog(context: context, builder: (builder){
+            return AlertDialog(
+              title: Text("Feedback Form"),
+              content: TextFormField(),
+              actions: [
+                TextButton(onPressed: (){
+                  Navigator.pop(context);
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Feedback is saved")));
+                }, child: Text('submit'))
+              ],
+            );
+          });
+        },child: Text('Give Feedback'),),);
       },
     );
   }

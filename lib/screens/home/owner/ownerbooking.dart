@@ -86,6 +86,17 @@ class _TravellerDetailsState extends State<TravellerDetails> {
                   corider: driverlist[index],));
             }));
         },
+          onLongPress: () async{
+            showDialog(context: context, builder: (builder){
+              return AlertDialog(
+                title: TextButton(child: Text('Delete'),
+                onPressed: () async{
+                  await AllJourneyDriverDatabaseService(useremail: widget.user.username)
+                      .deleteDriverJourneyData(driverlist[index].journeyid);
+                },),
+              );
+            });
+          },
         );
       },
       separatorBuilder: (context,index){
@@ -362,10 +373,31 @@ class _JourneyTrackerOwnerState extends State<JourneyTrackerOwner> {
                 setState(() {
                   vis = false;
                 });
+               await showDialog(context: context, builder: (builder){
+                  return AlertDialog(
+                    title: Text("Feedback Form"),
+                    content: TextFormField(),
+                    actions: [
+                      TextButton(onPressed: (){
+                        Navigator.pop(context);
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Feedback is saved")));
+                      }, child: Text('submit'))
+                    ],
+                  );
+                });
               }, child: Text('end'),),
             ],
             ),
           ),
+          ElevatedButton(onPressed: ()async{
+            print(widget.corider.email);
+            String barcodeScanRes;
+            barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
+                "#ff6666", "Cancel", true, ScanMode.QR);
+            print(barcodeScanRes);print(widget.corider.email);
+            await AllJourneyDriverDatabaseService(useremail: barcodeScanRes)
+              .updatetravellerLiftJourneyData(widget.corider.journeyid, widget.user.username);
+          }, child: Text('LiftService'))
         ],
       ),
     );
