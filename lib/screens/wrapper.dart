@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:untitled1/screens/authentication/emailverification.dart';
 import '../models/user.dart';
 import 'authentication/authenticate.dart';
 import 'home/home.dart';
@@ -21,7 +22,7 @@ class _WrapperState extends State<Wrapper> {
       print('user is null');
       return Authenticate();
     }else{
-      return Home(user: user);
+      return EmailVerify(user: user);
     }
   }
 }

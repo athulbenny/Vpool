@@ -38,127 +38,117 @@ class _AllJourneysState extends State<AllJourneys> {
   Widget build(BuildContext context) {
     final journeylist = Provider.of<List<Journey>?>(context) ?? [];
     print("journey length" + journeylist.length.toString());
-    return ListView.separated(
-        itemBuilder: (context, index) {
-          return GestureDetector(
-            onTap: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => SelectJourney(
-                            user: widget.user,
-                            selected: journeylist[index],
-                          )));
-            },
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  SizedBox(
-                    height: 30,
-                  ),
-                  Card(
-                    elevation: 10,
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              // Expanded(
-                              //   child: Text(
-                              //     'Journey',
-                              //     style: TextStyle(
-                              //       fontWeight: FontWeight.bold,
-                              //     ),
-                              //   ),
-                              // ),
-                              Expanded(
-                                child: Text(
-                                  journeylist[index].startingloc,
-                                  style: TextStyle(
-                                    fontSize: 16,
+    return Container(padding: EdgeInsets.only(bottom: MediaQuery.of(context).size.height/8,
+        left: MediaQuery.of(context).size.width/50,
+        right: MediaQuery.of(context).size.width/50),
+      child: ListView.separated(
+          itemBuilder: (context, index) {
+            return GestureDetector(
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => SelectJourney(
+                              user: widget.user,
+                              selected: journeylist[index],
+                            )));
+              },
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      height: 30,
+                    ),
+                    Card(
+                      elevation: 10,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                // Expanded(
+                                //   child: Text(
+                                //     'Journey',
+                                //     style: TextStyle(
+                                //       fontWeight: FontWeight.bold,
+                                //     ),
+                                //   ),
+                                // ),
+                                Expanded(
+                                  child: Text(
+                                    journeylist[index].startingloc,
                                   ),
                                 ),
-                              ),
 
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text(
-                                  '------->',
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text(
+                                    '------->',
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
                                 ),
-                              ),
-                              Expanded(
-                                child: Text(
-                                  journeylist[index].endingloc,
-                                  style: TextStyle(
-                                    fontSize: 16,
+                                Expanded(
+                                  child: Text(
+                                    journeylist[index].endingloc,
                                   ),
                                 ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 10),
-                          Row(
-                            children: [
-                              Expanded(
-                                flex: 1,
-                                child: Text(
-                                  'Journey Date',
-                                ),
-                              ),
-                              Expanded(
-                                flex: 1,
-                                child: Text(
-                                  journeylist[index].date,
-                                  style: TextStyle(
-                                    fontSize: 16,
+                              ],
+                            ),
+                            SizedBox(height: 20),
+                            Row(
+                              children: [
+                                Expanded(
+                                  flex: 1,
+                                  child: Text(
+                                    'Journey Date',
                                   ),
                                 ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 10),
-                          Row(
-                            children: [
-                              Expanded(
-                                flex: 1,
-                                child: Text(
-                                  'Remaining Seats',
-                                ),
-                              ),
-                              Expanded(
-                                flex: 1,
-                                child: Text(
-                                  journeylist[index].remseats,
-                                  style: TextStyle(
-                                    fontSize: 16,
+                                Expanded(
+                                  flex: 1,
+                                  child: Text(
+                                    journeylist[index].date,
                                   ),
                                 ),
-                              ),
-                            ],
-                          ),
-                        ],
+                              ],
+                            ),
+                            SizedBox(height: 10),
+                            Row(
+                              children: [
+                                Expanded(
+                                  flex: 1,
+                                  child: Text('Remaining Seats',
+                                  ),                              ),
+                                Expanded(
+                                  flex: 1,
+                                  child: Text(
+                                    journeylist[index].remseats,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          );
-        },
-        separatorBuilder: (context, index) {
-          return Container(
-            height: 5,
-          );
-        },
-        itemCount: journeylist.length);
+            );
+          },
+          separatorBuilder: (context, index) {
+            return Container(
+              height: 5,
+            );
+          },
+          itemCount: journeylist.length),
+    );
   }
 }

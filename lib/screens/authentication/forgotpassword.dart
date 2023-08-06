@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+
 import '../../services/auth.dart';
+
 
 ///page for implementing forget password
 class ForgotPassWord extends StatefulWidget {
@@ -24,9 +27,7 @@ class _ForgotPassWordState extends State<ForgotPassWord> {
     final AuthService _authService = AuthService();
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        // shape: const RoundedRectangleBorder(),
-        elevation: 0,
+        // toolbarHeight: 65,
         flexibleSpace: Container(
           decoration: const BoxDecoration(
               boxShadow: [
@@ -35,9 +36,9 @@ class _ForgotPassWordState extends State<ForgotPassWord> {
                     blurRadius: 20, // shadow radius
                     offset: Offset(5, 5), // shadow offset
                     spreadRadius:
-                        0.1, // The amount the box should be inflated prior to applying the blur
+                    0.1, // The amount the box should be inflated prior to applying the blur
                     blurStyle: BlurStyle.normal // set blur style
-                    ),
+                ),
               ],
               borderRadius: BorderRadius.only(
                   bottomRight: Radius.circular(30),
@@ -47,89 +48,81 @@ class _ForgotPassWordState extends State<ForgotPassWord> {
                   end: Alignment.centerRight,
                   colors: <Color>[Colors.cyan, Colors.green])),
         ),
+        leading: BackButton(),
         centerTitle: true,
+        shape: const RoundedRectangleBorder(),
+        // toolbarHeight: 70,
+        backgroundColor: Colors.transparent,
         title: Text(
-          "Reset Password",
-          style: GoogleFonts.poppins(fontSize: 24),
+          'Sign in',
         ),
+        elevation: 0,
       ),
-      backgroundColor: Colors.white,
       resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: Center(
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                // const SizedBox(
-                //   height: 20,
-                // ),
-                SizedBox(height: ht * 0.05),
-                // Icon(
-                //   Icons.mail_rounded,
-                //   size: 120,
-                // ),
-
-                Text(
-                  ' Enter your registered email id',
-                  style: GoogleFonts.libreFranklin(fontSize: 20),
-                ),
-                const SizedBox(
-                  height: 30,
-                ),
-                Container(
-                  height: 60,
-                  width: wd * 0.75,
-                  child: TextFormField(
-                    controller: email_cont,
-                    textAlign: TextAlign.center,
-                    decoration: const InputDecoration(
-                      contentPadding: EdgeInsets.symmetric(horizontal: 16),
-                      border: OutlineInputBorder(),
-                      hintText: 'Enter email',
-                      alignLabelWithHint: true,
+          child: Column(
+            children: [
+              // Container(
+              //   height: MediaQuery.of(context).size.height/3,
+              //   width: MediaQuery.of(context).size.width/2,
+              //   child: Image.network(logoLink,
+              //     headers: {'Access-Control-Allow-Origin':'*'},
+              //     loadingBuilder: (context,child,loadingProgress){
+              //       if(loadingProgress==null){return child;}
+              //       return Text("");
+              //     },errorBuilder: (context,error,stackTrace){
+              //       return Text("");
+              //     },
+              //   ),                //child: Image.asset('logo.jpg'),
+              // ),
+              SingleChildScrollView(
+                child: Column(
+                  children: [
+                    SizedBox(height: ht * 0.05),
+                    Text(
+                      ' Enter your registered email id',
                     ),
-                  ),
-                ),
-                const SizedBox(
-                  height: 50,
-                ),
-
-                Container(
-                  height: 55,
-                  width: wd * 0.45,
-                  child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.green[400],
-                          foregroundColor: Colors.white,
-                          shadowColor: Colors.grey,
-                          elevation: 8,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(32.0)),
-                          minimumSize: Size(150, 50),
-                          maximumSize: Size(150, 50) //////// HERE
+                    const SizedBox(
+                      height: 30,
+                    ),
+                    Center(
+                      child: Container(width: MediaQuery.of(context).size.width/2,
+                        child: TextFormField(
+                          style: TextStyle(),
+                          controller: email_cont,
+                          decoration: const InputDecoration(
+                            contentPadding: EdgeInsets.symmetric(horizontal: 8),
+                            border: OutlineInputBorder(),
+                            hintText: 'EmailID',hintStyle: TextStyle(color: Colors.black87),
+                            alignLabelWithHint: true,
                           ),
-                      onPressed: () async {
-                        await _authService.resetPassword(
-                            email_cont.text.trim(), context);
-                      },
-                      child: Text(
-                        "Submit",
-                        style: GoogleFonts.poppins(fontSize: 22),
-                      )),
-                ),
-
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(5, 30, 5, 5),
-                  child: Expanded(
-                    child: Image.asset(
-                      'assets/images/car.jpeg',
-                      fit: BoxFit.cover,
-                      height: 275.0,
+                        ),
+                      ),
                     ),
-                  ),
-                )
-              ],
-            ),
+                    const SizedBox(
+                      height: 50,
+                    ),
+
+                    Container(
+                      child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            elevation: 2,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15)), //////// HERE
+                          ),
+                          onPressed: () async {
+                            await _authService.resetPassword(
+                                email_cont.text.trim(), context);
+                          },
+                          child: Text(
+                            "Submit",
+                          )),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
       ),

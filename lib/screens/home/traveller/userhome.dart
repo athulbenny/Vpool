@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:untitled1/main.dart';
 import 'package:untitled1/models/components.dart';
 import 'package:untitled1/screens/home/traveller/travelleruserhome.dart';
@@ -49,7 +48,6 @@ class _UserHomeState extends State<UserHome> {
         title: Center(
             child: Text(
           'Vpool',
-          style: GoogleFonts.poppins(fontSize: 24),
         )),
         backgroundColor: Colors.white,
         elevation: 0,
@@ -87,20 +85,25 @@ class _UserHomeState extends State<UserHome> {
           }),
         ],
       ),
-
+      backgroundColor: Colors.black87,
       ///body of travler page
       body: Stack(
         children: [
+          // Container(
+          //   decoration: BoxDecoration(
+          //       image: new DecorationImage(image: AssetImage('images/Frame.jpg'),fit:BoxFit.cover)
+          //   ),
+          // ),
           Container(
-              padding: EdgeInsets.only(
-                  left: MediaQuery.of(context).size.height / 50,
-                  right: MediaQuery.of(context).size.height / 50),
+              // padding: EdgeInsets.only(
+              //     left: MediaQuery.of(context).size.height / 50,
+              //     right: MediaQuery.of(context).size.height / 50),
               height: MediaQuery.of(context).size.height,
               child: pages[pageIndex]),
           Positioned(
               top: MediaQuery.of(context).size.height / 1.25,
-              right: 5,
-              left: 5,
+              right: 0,
+              left: 0,bottom: 0,
               child: buildMyNavBar(context)),
         ],
       ),
@@ -111,8 +114,11 @@ class _UserHomeState extends State<UserHome> {
   Container buildMyNavBar(BuildContext context) {
     return Container(
       height: 80,
-      decoration: BoxDecoration(
-        color: bottomColor,
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+            begin: Alignment.centerLeft,
+            end: Alignment.centerRight,
+            colors: <Color>[Colors.cyan, Colors.green]),
         borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(20),
           topRight: Radius.circular(20),
@@ -140,7 +146,7 @@ class _UserHomeState extends State<UserHome> {
                       color: Colors.white,
                       size: 35,
                     ),
-            ),
+            ),SizedBox(height: 8,),
             const Text("Home")
           ]),
           Column(children: [
@@ -162,7 +168,7 @@ class _UserHomeState extends State<UserHome> {
                       color: Colors.white,
                       size: 35,
                     ),
-            ),
+            ),SizedBox(height: 8,),
             const Text('Search')
           ]),
           Column(children: [
@@ -184,7 +190,7 @@ class _UserHomeState extends State<UserHome> {
                       color: Colors.white,
                       size: 35,
                     ),
-            ),
+            ),SizedBox(height: 8,),
             const Text('Notification')
           ]),
           Column(children: [
@@ -197,16 +203,16 @@ class _UserHomeState extends State<UserHome> {
               },
               icon: pageIndex == 3
                   ? const Icon(
-                      Icons.person_2,
+                      Icons.dashboard_customize_sharp,
                       color: Colors.white,
                       size: 35,
                     )
                   : const Icon(
-                      Icons.person_2_outlined,
+                      Icons.dashboard_customize_outlined,
                       color: Colors.white,
                       size: 35,
                     ),
-            ),
+            ),SizedBox(height: 8,),
             const Text('My Bookings')
           ]),
         ],
@@ -231,7 +237,6 @@ class _QrTravellerState extends State<QrTraveller> {
       appBar: AppBar(
         title: Text(
           "My QR",
-         style: GoogleFonts.poppins(fontSize: 24),
         ),
         centerTitle: true,
         backgroundColor: Colors.white,
@@ -256,23 +261,23 @@ class _QrTravellerState extends State<QrTraveller> {
               SizedBox(
                 height: 30,
               ),
-              ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green[400],
-                    foregroundColor: Colors.white,
-                    shadowColor: Colors.grey,
-                    elevation: 8,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(32.0)),
-                    minimumSize: Size(200, 50), //////// HERE
-                  ),
-                  onPressed: () {
-                    Navigator.of(context).pushNamed('qr_scan');
-                  },
-                  child: Text(
-                    "Scan QR",
-                    style: GoogleFonts.poppins(fontSize: 16),
-                  ))
+              // ElevatedButton(
+              //     style: ElevatedButton.styleFrom(
+              //       backgroundColor: Colors.green[400],
+              //       foregroundColor: Colors.white,
+              //       shadowColor: Colors.grey,
+              //       elevation: 8,
+              //       shape: RoundedRectangleBorder(
+              //           borderRadius: BorderRadius.circular(32.0)),
+              //       minimumSize: Size(200, 50), //////// HERE
+              //     ),
+              //     onPressed: () {
+              //       Navigator.of(context).pushNamed('qr_scan');
+              //     },
+              //     child: Text(
+              //       "Scan QR",
+              //       style: GoogleFonts.poppins(fontSize: 16),
+              //     ))
             ],
           ),
         )),

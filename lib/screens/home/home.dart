@@ -37,13 +37,15 @@ class UserSwitch extends StatefulWidget {
 class _UserSwitchState extends State<UserSwitch> {
   @override
   Widget build(BuildContext context) {
-    String? userdesignation="";
+    String? userdesignation="";String numpl="",vtype="";
     final userlist = Provider.of<List<Travellers>?>(context)??[];
     print("username="+widget.user.username);
     print("length= "+ userlist.length.toString());
     for(int i=0;i<userlist.length;i++){print(userlist[i].email);
       if(userlist[i]?.email==widget.user.username){
         userdesignation=userlist[i]?.isOwner;
+        numpl=userlist[i].vehicleno;
+        vtype= userlist[i].vehicletype;
         print(userlist[i].username);
       }
     }
@@ -52,9 +54,9 @@ class _UserSwitchState extends State<UserSwitch> {
     if (userdesignation == '0') {
       return UserHome(user: widget.user);
     } else if (userdesignation == '1'){
-      return OwnerHome(user: widget.user);
+      return OwnerHome(user: widget.user,numpl: numpl,vtype: vtype,);
     }else if (userdesignation == '2'){
-      return DualHome(user: widget.user);
+      return DualHome(user: widget.user,numpl: numpl,vtype: vtype,);
     }
     return Container(height: 1,child: CircularProgressIndicator(),);
   }

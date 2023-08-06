@@ -87,13 +87,13 @@ class AuthService {
       String adhar,
       String licence,
       String rcbook,
-      String vno) async {
+      String vno,String vehtype) async {
     try {
       UserCredential result = await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
       User user = result.user!;
       await UserDatabaseService()
-          .updateOwnerData(email, username, phno, adhar, vno, rcbook, licence);
+          .updateOwnerData(email, username, phno, adhar, vno, rcbook, licence,vehtype);
       return _userFromFirebaseUser(user);
     } catch (e) {
       print(e.toString());
@@ -109,13 +109,13 @@ class AuthService {
       String adhar,
       String licence,
       String rcbook,
-      String vno) async {
+      String vno,String vehtype) async {
     try {
       UserCredential result = await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
       User user = result.user!;
       await UserDatabaseService()
-          .updateDualData(email, username, phno, adhar, vno, rcbook, licence);
+          .updateDualData(email, username, phno, adhar, vno, rcbook, licence,vehtype);
       return _userFromFirebaseUser(user);
     } catch (e) {
       print(e.toString());

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
+import 'package:untitled1/constants/locationConstants.dart';
 import '../../services/auth.dart';
 
 class Register extends StatefulWidget {
@@ -17,7 +17,8 @@ class _RegisterState extends State<Register> {
   final _formKey = GlobalKey<FormState>();
 
   TextEditingController username1 = new TextEditingController();
-  TextEditingController passsord1 = new TextEditingController();
+  TextEditingController  passsord1 = new TextEditingController();
+  TextEditingController confirmpasssord1  = new TextEditingController();
   TextEditingController phno = new TextEditingController();
   TextEditingController adhar = new TextEditingController();
   TextEditingController email = new TextEditingController();
@@ -27,9 +28,11 @@ class _RegisterState extends State<Register> {
 
   String dropdownvalue = 'traveller', error = "";
   var users = ['traveller', 'owner', 'dual'];
+  String vehdropdownvalue='Light MV',vehval="Light MV";
+  var vehtype = ['2-wheeler', 'Light MV', 'Heavy MV'];
   String newval = "traveller";
   bool validate = false, visible = false;
-  bool ph_validate = false;
+  bool ph_validate = false;bool tandc=false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -69,8 +72,17 @@ class _RegisterState extends State<Register> {
         centerTitle: true,
         title: Text(
           'Sign up',
-          style: GoogleFonts.poppins(fontSize: 20),
         ),
+        // actions: [
+        //   IconButton(
+        //       onPressed: () {
+        //         widget.toggleView();
+        //       },
+        //       icon: Icon(
+        //         Icons.arrow_back,
+        //         size: 30,
+        //       ))
+        // ],
       ),
       body: SingleChildScrollView(
         //physics: NeverScrollableScrollPhysics(),
@@ -138,11 +150,36 @@ class _RegisterState extends State<Register> {
                       flex: 3,
                       child: TextFormField(
                         controller: passsord1,
+                        obscureText: true,
                         decoration: InputDecoration(
-                            hintText: 'Password',
-                            errorText: validate
-                                ? "password must be atleast eight character long"
-                                : ""),
+                            hintText: 'Password',),
+                            // errorText: validate
+                            //     ? "password must be atleast eight character long"
+                            //     : ""),
+                        validator: (val) =>
+                        val!.length<8 ? "password must be atleast 8 character long" : null,
+                      ),
+                    ),
+                  ]),
+                  Row(children: [
+                    Expanded(
+                        flex: 1,
+                        child: Icon(
+                          Icons.password,
+                          size: 40,
+                        )),
+                    SizedBox(
+                      width: 30,
+                    ),
+                    Expanded(
+                      flex: 3,
+                      child: TextFormField(
+                        obscureText: true,
+                        controller: confirmpasssord1,
+                        decoration: InputDecoration(
+                            hintText: 'Confirm Password',),
+                        validator: (val) =>
+                        val!=passsord1.text ? "password doesnot match" : null,
                       ),
                     ),
                   ]),
@@ -161,11 +198,14 @@ class _RegisterState extends State<Register> {
                     ),
                     Expanded(
                       flex: 3,
-                      child: TextField(
+                      child: TextFormField(
+                        validator: (val) =>
+                        val!.isEmpty ? "Phone Number cannot be empty" : null,
                         controller: phno,
                         decoration: InputDecoration(
                             hintText: 'Phone number',
-                            errorText: ph_validate ? "Invalid Mob.No." : ""),
+                            //errorText: ph_validate ? "Invalid Mob.No." : ""
+                          ),
                       ),
                     ),
                   ]),
@@ -248,10 +288,46 @@ class _RegisterState extends State<Register> {
                             ),
                             Expanded(
                               flex: 3,
-                              child: TextField(
+                              child: TextFormField(
+                                validator: (val) =>
+                                val!.isEmpty ? "Driving licence number cannot be empty" : null,
                                 controller: drl,
                                 decoration: InputDecoration(
                                     hintText: 'Driving licence No.'),
+                              ),
+                            ),
+                          ]),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          Row(children: [
+                            Expanded(
+                                flex: 1,
+                                child: Icon(
+                                  Icons.directions_car,
+                                  size: 45,
+                                )),
+                            SizedBox(
+                              width: 30,
+                            ),
+                            Expanded(
+                              flex: 3,
+                              child: DropdownButton(
+                                value: vehdropdownvalue,
+                                icon: const Icon(Icons.keyboard_arrow_down),
+                                items: vehtype.map((String user) {
+                                  return DropdownMenuItem(
+                                    value: user,
+                                    child: Text(user),
+                                  );
+                                }).toList(),
+                                onChanged: (String? newValue) {
+                                  setState(() {
+                                    vehdropdownvalue = newValue!;
+                                    print(newValue);
+                                    vehval = newValue;
+                                  });
+                                },
                               ),
                             ),
                           ]),
@@ -270,8 +346,10 @@ class _RegisterState extends State<Register> {
                             ),
                             Expanded(
                               flex: 3,
-                              child: TextField(
+                              child: TextFormField(
                                 controller: vno,
+                                validator: (val) =>
+                                val!.isEmpty ? "Vehucle Number cannot be empty" : null,
                                 decoration:
                                     InputDecoration(hintText: 'Vehicle No.'),
                               ),
@@ -292,8 +370,10 @@ class _RegisterState extends State<Register> {
                             ),
                             Expanded(
                               flex: 3,
-                              child: TextField(
+                              child: TextFormField(
                                 controller: rcbook,
+                                validator: (val) =>
+                                val!.isEmpty ? "RCBook cannot be empty" : null,
                                 decoration:
                                     const InputDecoration(hintText: 'RC id'),
                               ),
@@ -304,8 +384,34 @@ class _RegisterState extends State<Register> {
                           ),
                         ],
                       )),
+
                   SizedBox(
                     height: 20,
+                  ),
+                  Center(
+                    child: Row(
+                      children: [
+                        Checkbox(value: this.tandc, onChanged: (bool? value){
+                          setState(() {
+                            this.tandc=value!;
+                            print(value);
+                          });
+                        }),
+                        TextButton(child: Text('Accept Terms and Conditions',),
+                          onPressed: (){
+                            showDialog(context: context, builder: (builder){
+                              return AlertDialog(
+                                title: Text("Terms and Conditions",style: TextStyle(fontWeight: FontWeight.bold),),
+                                content: SingleChildScrollView(child: Text('${termsAndCondition}')),
+                                actions: [
+                                  TextButton(onPressed: (){Navigator.pop(context);}, child: Text('OK')),
+                                ],
+                              );
+                            });
+                          },
+                        ),
+                      ],
+                    ),
                   ),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
@@ -320,16 +426,12 @@ class _RegisterState extends State<Register> {
                     onPressed: () async {
                       dynamic result;
                       //if(_formKey.currentState!.validate()){}
-                      if (phno.text.trim() != 10) {
-                        ph_validate = true;
-                      }
 
-                      if (passsord1.text.length < 8) {
-                        validate = true;
-                      } else {
+
+                      if(_formKey.currentState!.validate() && tandc) {
                         validate = false;
                         if (newval == 'owner') {
-                          dynamic result =
+                           result =
                               await _auth.registerWithEmailandPasswordowner(
                                   email.text,
                                   passsord1.text,
@@ -338,9 +440,9 @@ class _RegisterState extends State<Register> {
                                   adhar.text,
                                   drl.text,
                                   rcbook.text,
-                                  vno.text);
+                                  vno.text,vehval);
                         } else if (newval == 'traveller') {
-                          dynamic result =
+                           result =
                               await _auth.registerWithEmailandPasswordtraveller(
                                   email.text,
                                   passsord1.text,
@@ -348,7 +450,7 @@ class _RegisterState extends State<Register> {
                                   phno.text,
                                   adhar.text);
                         } else {
-                          dynamic result =
+                           result =
                               await _auth.registerWithEmailandPassworddual(
                                   email.text,
                                   passsord1.text,
@@ -357,7 +459,7 @@ class _RegisterState extends State<Register> {
                                   adhar.text,
                                   drl.text,
                                   rcbook.text,
-                                  vno.text);
+                                  vno.text,vehval);
                         }
                         if (result == null) {
                           setState(() {
@@ -383,7 +485,6 @@ class _RegisterState extends State<Register> {
                     },
                     child: Text(
                       'Register',
-                      style: GoogleFonts.poppins(fontSize: 18),
                     ),
                   ),
                   const SizedBox(

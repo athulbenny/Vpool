@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../constants/locationConstants.dart';
 import '../../../models/user.dart';
 import '../../../services/databaseService.dart';
 
@@ -16,9 +17,10 @@ class _OwnerPaymentState extends State<OwnerPayment> {
   @override
   Widget build(BuildContext context) {
     return StreamProvider.value(
-        value: JourneyDatabaseService().journeylist,
-    initialData: null,
-    child: Payment(),);
+      value: JourneyDatabaseService().journeylist,
+      initialData: null,
+      child: Payment(),
+    );
   }
 }
 
@@ -34,7 +36,19 @@ class _PaymentState extends State<Payment> {
   Widget build(BuildContext context) {
     final travelpaymentlist = Provider.of<List<Journey>?>(context) ?? [];
     return Scaffold(
-      body: Text("Not transactions yet done"),
+      backgroundColor: Colors.black87,
+      body: Column(
+        children: [
+          SizedBox(
+            height: 40,
+          ),
+          Center(
+            child: Text(
+              "No Transactions done yet",style: text,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

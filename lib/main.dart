@@ -8,17 +8,13 @@ import 'package:untitled1/models/user.dart';
 import 'models/components.dart';
 
 ///colors to top app bar and bottom naviagtion bar
-Color topcolor = Colors.red, bottomColor = Colors.red;
+Color topcolor = Colors.red, bottomColor = Colors.green;
 
 ///main function
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
-      options: const FirebaseOptions(
-          apiKey: 'AIzaSyDytZzMm5qumYwjXdICEjJwTSM5I3xyM94',
-          appId: '1:503477268361:android:992eaf60535859fce47b58',
-          messagingSenderId: '503477268361',
-          projectId: 'miniproject-beea5'));
+      options: const FirebaseOptions());
 
   runApp(const MyApp());
 }

@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../../services/auth.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'package:top_snackbar_flutter/safe_area_values.dart';
@@ -64,13 +63,19 @@ class _LoginState extends State<Login> {
           backgroundColor: Colors.transparent,
           title: Text(
             'Sign in',
-            style: GoogleFonts.poppins(fontSize: 24),
           ),
           elevation: 0,
         ),
         body: SingleChildScrollView(
           child:
+
+              //////////
               Container(
+            padding: EdgeInsets.only(
+                // left: MediaQuery.of(context).size.height / 70,
+                // right: MediaQuery.of(context).size.height / 70,
+                // top: MediaQuery.of(context).size.height / 100,
+                ),
             child: Form(
               key: _formKey,
               child: Center(
@@ -158,7 +163,6 @@ class _LoginState extends State<Login> {
                         },
                         child: Text(
                           'Login',
-                          style: GoogleFonts.poppins(fontSize: 20),
                         )),
                     SizedBox(
                       height: 32,
@@ -169,7 +173,6 @@ class _LoginState extends State<Login> {
                       children: [
                         Text(
                           "Don't have account? | ",
-                          style: GoogleFonts.libreFranklin(fontSize: 16),
                         ),
                         TextButton(
                             onPressed: () {
@@ -177,8 +180,6 @@ class _LoginState extends State<Login> {
                             },
                             child: Text(
                               "Signup",
-                              style: GoogleFonts.poppins(
-                                  fontSize: 20, fontWeight: FontWeight.bold),
                             ))
                       ],
                     ),
@@ -191,7 +192,6 @@ class _LoginState extends State<Login> {
                         },
                         child: Text(
                           "Forgot password?",
-                          style: GoogleFonts.poppins(fontSize: 17),
                         )),
                     Padding(
                       padding: const EdgeInsets.fromLTRB(5, 10, 5, 5),

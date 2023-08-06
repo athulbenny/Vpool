@@ -11,7 +11,7 @@ class UserDatabaseService {
 
   Future updateOwnerData(String email, String username,
       String phno, String adhar, String vno, String rcbook,
-      String licence) async {
+      String licence,String vehtype) async {
     return await _usercollection.doc(email).set({
       "isOwner": "1",
       "username": username,
@@ -21,6 +21,7 @@ class UserDatabaseService {
       "licence": licence,
       "rcbook": rcbook,
       "vehicleno": vno,
+      "vehicletype":vehtype,
     });
   }
 
@@ -37,7 +38,7 @@ class UserDatabaseService {
 
   Future updateDualData(String email, String username,
       String phno, String adhar, String vno, String rcbook,
-      String licence) async {
+      String licence,String vehtype) async {
     return await _usercollection.doc(email).set({
       "isOwner": "2",
       "username": username,
@@ -47,6 +48,7 @@ class UserDatabaseService {
       "licence": licence,
       "rcbook": rcbook,
       "vehicleno": vno,
+      "vehicletype":vehtype,
     });
   }
 
@@ -60,7 +62,9 @@ class UserDatabaseService {
       print("travelling users is" + _user.toString());
       return Travellers(email: _user["email"] ?? "",
           username: _user["username"] ?? "",
-          isOwner: _user["isOwner"] ?? "");
+          vehicleno: _user["vehicleno"]??"",
+          isOwner: _user["isOwner"] ?? "",
+      vehicletype: _user["vehicletype"]??"");
     }).toList();
   }
 
@@ -74,6 +78,10 @@ class JourneyDatabaseService{
 
   final CollectionReference _usercollection = FirebaseFirestore.instance
       .collection('user');
+
+  Future journeydltoptions(String journeyid) async{
+    return await _journeycollection.doc(journeyid).delete();
+  }
 
   Future addAdminJourneyDataInUser(String email,String startingtime, String endingtime,
       String startingloc, String endingloc, String numseats, String date,
@@ -92,13 +100,17 @@ class JourneyDatabaseService{
       "endlong":elong,
       "numseats": numseats,
       "remseats":numseats,
-      "journeyid":journeyid
+      "journeyid":journeyid,
+      "isEnd":"false",
+      "isleaved":"false",
+      "isjoined":"false"
     });
   }
 
   Future addAdminJourneyDataInJourney(String email,String startingtime, String endingtime,
       String startingloc, String endingloc, String numseats, String date,
-      String desc,String journeyid,String slat,String slong,String elat,String elong,String price) async {
+      String desc,String journeyid,String slat,String slong,String elat,
+      String elong,String price,String numpl,String vtype) async {
     return await _journeycollection.doc(journeyid).set({
       "email":email,
       "startingtime": startingtime,
@@ -114,7 +126,9 @@ class JourneyDatabaseService{
       "endlat":elat,
       "endlong":elong,
       "desc": desc,
-      "journeyid":journeyid
+      "journeyid":journeyid,
+      "vehicleno":numpl,
+      "vehicletype":vtype
     });
   }
 
@@ -135,6 +149,8 @@ class JourneyDatabaseService{
           email: _journeylist["email"] ?? "",
           price: _journeylist["price"]??"",
           remseats: _journeylist["remseats"] ?? "",
+          vehicleno: _journeylist["vehicleno"]??"",
+          vehicletype: _journeylist["vehicletype"]??"",
           journeyid: _journeylist["journeyid"] ?? "");
     }).toList();
   }
@@ -152,11 +168,12 @@ class JourneyDriverTravellerConnection {
   final CollectionReference _usercollection = FirebaseFirestore.instance
       .collection('user');
 
-  Future AddTravellerJourneyData(String email, String startingloc,
+  Future AddTravellerJourneyData(String date,String email, String startingloc,
       String endingloc, String numseats, String journeyid,
       String slat,String slong,String elat,String elong,) async {
     return await _usercollection.doc(driverid).collection('journey').doc(
         journeyid).collection('coriders').doc(email).set({
+      "date":date,
       "email": email,
       'startingloc': startingloc,
       "endingloc": endingloc,
@@ -167,11 +184,13 @@ class JourneyDriverTravellerConnection {
       "numseats": numseats,
       "journeyid": journeyid,
       "driverid": driverid,
+      "isjoined":"false",
+      "isleaved":"false",
     });
   }
 
   Future AddAdminJourneyData(String date,String email, String startingloc, String endingloc,
-      String numseats, String journeyid, String startingtime, String endingtime) async {
+      String numseats, String journeyid, String startingtime, String endingtime,String vehicleno) async {
     return await _usercollection.doc(email).collection('journey')
         .doc(journeyid)
         .set({
@@ -184,6 +203,9 @@ class JourneyDriverTravellerConnection {
       "numseats": numseats,
       "journeyid": journeyid,
       "driverid": driverid,
+      "vehicleno":vehicleno,
+      "isEnd":"false",
+      "isstart":"false",
     });
   }
 
@@ -251,26 +273,23 @@ class AllJourneyTravellerDatabaseService {
           isnotified: _user["isnotified"]??"",
           driverid: _user["driverid"]??"",
           otp: _user["otp"]??"",
+          isEnd: _user["isEnd"]??"",
           startingtime: _user["startingtime"]??"",
           endingtime: _user["endingtime"]??"",
+          vehicleno: _user["vehicleno"]??"",
+          currentlocation: _user["currentlocation"]??"",
           distance: _user["distance"]??"");
     }).toList();
   }
 
   Future updateDriverJSStartData(String journeyid)async{
     return await _usercollection.doc(useremail).collection('journey').doc(journeyid).update(
-      {"isstart":"true","isend":"false"});
+      {"isstart":"true","isEnd":"false"});
   }
 
   Future updateDriverJEStartData(String journeyid)async{
     return await _usercollection.doc(useremail).collection('journey').doc(journeyid).update(
-        {"isend":"true",});
-  }
-
-  Future deleteTravellerJourneyData(String journeyid,driveremail)async{
-    await _usercollection.doc(useremail).collection('journey').doc(journeyid).delete();
-    return await _usercollection.doc(driveremail).collection('journey').doc(journeyid).collection('coriders')
-        .doc(useremail).delete();
+        {"isEnd":"true",});
   }
 
 }
@@ -282,8 +301,6 @@ class AllJourneyDriverDatabaseService {
 
   final CollectionReference _usercollection = FirebaseFirestore.instance
       .collection('user');
-  final CollectionReference _journeycollection = FirebaseFirestore.instance
-      .collection('journey');
 
   Stream<List<Travel>> get corider {
     return _usercollection.doc(useremail).collection('journey')
@@ -306,21 +323,10 @@ class AllJourneyDriverDatabaseService {
           slong: _user["startlong"] ?? "",
           elat: _user["endlat"] ?? "",
           elong: _user["endlong"] ?? "",
+          isEnd: _user["isEnd"]??"",
+          isstart: _user["isstart"]??"",
           journeyid: _user["journeyid"] ?? "");
     }).toList();
-  }
-
-  Future updatetravellerLiftJourneyData(String journeyid,String driveremail)async{
-    await _usercollection.doc(useremail).collection('journey').doc(journeyid).set({"islift":"true",
-    "journeyid":journeyid,"driverid":driveremail});
-    return await _usercollection.doc(driveremail).collection('journey').doc(journeyid)
-        .collection('coriders').doc(useremail).set({
-      "islift":"true","journeyid":journeyid,"driverid":driveremail});
-  }
-
-  Future deleteDriverJourneyData(String journeyid)async{
-    await _journeycollection.doc(journeyid).delete();
-    return await _usercollection.doc(useremail).collection('journey').doc(journeyid).delete();
   }
 }
 
@@ -367,22 +373,51 @@ class AdminJourneyDatabaseService {
       'otp': otp
     });
   }
-  Future updateDriverJourneyDistanceDataOtp(String otp) async {
-    return await _usercollection.doc(useremail).collection('journey').doc(
+  Future updateDriverJourneyDistanceDataOtp(String otp,String tremail) async {
+    return await _usercollection.doc(tremail).collection('journey').doc(
         journeyid).update({
       "otp": otp,
     });
   }
+
   Future updateDriverJourneyDataInUsers(String tremail) async {
     return await _usercollection.doc(useremail).collection('journey').doc(
         journeyid).collection('coriders').doc(tremail).update({
       'isleaved':'true',
     });
   }
-  Future updateDriverJourneyDistanceData(String distance) async {
+  Future updateDriverJourneyDistanceData(String distance,String place) async {
     return await _usercollection.doc(useremail).collection('journey').doc(
         journeyid).update({
-      "distance": distance,
+      "distance": distance,"currentlocation":place,
     });
   }
 }
+
+class LiftService{
+
+
+  final CollectionReference _usercollection = FirebaseFirestore.instance
+      .collection('user');
+  
+  Future setLiftServiceUserDetails(String useremail,String journeyid,String driverid,String otp)async{
+    return await _usercollection.doc(useremail).collection('journey').doc(journeyid).set({
+      "email":useremail,
+      "driverid": driverid,
+      "otp":otp,
+      "journeyid":journeyid
+    });
+  }
+
+  Future setLiftServiceDriverDetails(String useremail,String journeyid,String driverid,String otp,String isjoined)async{
+    return await _usercollection.doc(driverid).collection('journey').doc(journeyid).collection('coriders').doc(useremail).set({
+      "email":useremail,
+      "driverid": driverid,
+      "otp":otp,
+      "journeyid":journeyid,
+      "isjoined": isjoined,
+      'isleaved':'false',
+    });
+  }
+}
+
