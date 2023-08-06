@@ -4,13 +4,11 @@ A new Flutter project.
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+This is a project developed as part of miniproject.
+Vpool is a vehicle pooling app. This app helps people to share the riding.
+People having vehicle can add a trip. While other people can join the ride with that rider.
+once the trip is succesfluuly complted the tider will be giving the price of that journey
 
-A few resources to get you started if this is your first Flutter project:
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Current status:
+This app is currently under construction
