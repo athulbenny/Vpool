@@ -12,3 +12,5 @@ once the trip is succesfluuly complted the tider will be giving the price of tha
 
 ## Current status:
 This app is currently under construction
+
+App is available at: https://miniproject-beea5.web.app/
